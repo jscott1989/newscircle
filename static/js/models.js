@@ -41,3 +41,12 @@ var Discussion = Backbone.Collection.extend({
         return d.results;
     }
 });
+
+var DiscussionGroups = Backbone.Collection.extend({
+    url: '/' + DISCUSSION_ID + '/groups/',
+    model: User,
+
+    parse: function(d) {
+        return d.results;
+    }
+});

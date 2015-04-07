@@ -1,9 +1,9 @@
 """ Discussion views. """
 
 from django.shortcuts import render, get_object_or_404, redirect
-from models import Topic, Comment, TopicUser
+from models import Topic, Comment, TopicUser, Group
 from rest_framework import viewsets
-from serializers import CommentSerializer, TopicUserSerializer
+from serializers import CommentSerializer, TopicUserSerializer, GroupSerializer
 from forms import TopicForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -56,8 +56,11 @@ class TopicUserViewSet(viewsets.ModelViewSet):
 
     """API endpoint that allows users to be viewed or edited."""
 
-    queryset = TopicUser.objects.all()
     serializer_class = TopicUserSerializer
+
+    def get_queryset(self):
+        return TopicUser.objects.filter(
+            topic__id=self.request.resolver_match.kwargs['pk'])
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -66,4 +69,15 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
 
     def get_queryset(self):
-        return Comment.objects.filter(topic__id=self.request.resolver_match.kwargs['pk'])
+        return Comment.objects.filter(
+            topic__id=self.request.resolver_match.kwargs['pk'])
+
+
+class GroupViewSet(viewsets.ModelViewSet):
+
+    """API endpoint that allows groups to be viewed or edited."""
+    serializer_class = GroupSerializer
+
+    def get_queryset(self):
+        return Group.objects.filter(
+            topic__id=self.request.resolver_match.kwargs['pk'])

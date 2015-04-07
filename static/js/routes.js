@@ -5,8 +5,10 @@ var Router = Backbone.Router.extend({
     index : function() {
         COMMENTS = new Discussion([], {mode: "client"});
         USERS = new DiscussionUsers([], {mode: "client"});
+        GROUPS = new DiscussionGroups([], {mode: "client"});
         COMMENTS.fetch();
         USERS.fetch();
+        GROUPS.fetch();
         
         React.render(
             <DiscussionComponent collection={COMMENTS} />,

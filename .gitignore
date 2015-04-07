@@ -3,3 +3,4 @@ bower_components
 compiled_static
 db.sqlite3
 ve
+*.pyc

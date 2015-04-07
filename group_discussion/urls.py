@@ -4,8 +4,9 @@ from rest_framework import routers
 from group_discussion import views
 
 router = routers.DefaultRouter()
-router.register(r'users', views.TopicUserViewSet)
+router.register(r'users', views.TopicUserViewSet, base_name="user")
 router.register(r'comments', views.CommentViewSet, base_name="comment")
+router.register(r'groups', views.GroupViewSet, base_name="group")
 
 urlpatterns = patterns(
     '',

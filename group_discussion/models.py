@@ -16,21 +16,33 @@ class Topic(models.Model):
         return self.title
 
 
+class Group(models.Model):
+
+    """ A group which exists within a topic. """
+
+    topic = models.ForeignKey(Topic)
+    number = models.IntegerField()
+
+
 class TopicUser(models.Model):
 
     """ An instance of a user used for a specific topic. """
 
     user = models.ForeignKey("auth.User", related_name="topic_users")
     topic = models.ForeignKey(Topic)
+    group = models.ForeignKey(Group, null=True, related_name="users")
 
     @property
     def username(self):
         """ The user's username. """
         return self.user.username
 
+
 def get_topic_user(user, topic):
+    """ Get the TopicUser for a given user and topic. """
     return user.topic_users.get_or_create(topic=topic)[0]
 User.topic_user = get_topic_user
+
 
 class Comment(models.Model):
 
