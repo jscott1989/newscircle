@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load sekizai_tags %}
+
+{% block content %}
+    <a href="{% url "index" %}">Back to index</a>
+    <h1>{{topic.title}}</h1>
+    <p>{{topic.description}}</p>
+    <div id="discussion">
+
+    </div>
+
+    {% addtoblock "js" %}
+        <script>
+            var DISCUSSION_ID = {{topic.id}};
+        </script>
+        <!-- Libraries -->
+        <script src="{% static "jquery/dist/jquery.min.js"%}"></script>
+        <script src="{% static "jquery.cookie/jquery.cookie.js"%}"></script>
+        <script src="{% static "underscore/underscore-min.js"%}"></script>
+        <script src="{% static "react/react.min.js"%}"></script>
+        <script src="{% static "backbone/backbone.js"%}"></script>
+
+        <!-- External code -->
+        <script src="{% static "js/lib/BackboneMixin.js"%}"></script>
+
+        <!-- Application code -->
+        <script type="text/jsx" src="{% static "js/models.js"%}"></script>
+        <script type="text/jsx" src="{% static "js/components.js"%}"></script>
+        <script type="text/jsx" src="{% static "js/routes.js"%}"></script>
+    {% endaddtoblock %}
+{% endblock %}

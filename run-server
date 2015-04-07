@@ -1,0 +1,9 @@
+#!/bin/sh
+if [ ! -d "ve" ]; then
+    echo "Error: Run ./setup first"
+    exit
+fi
+
+export DJANGO_DEBUG="1"
+source ve/bin/activate
+python manage.py runserver

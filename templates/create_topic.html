@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Create Topic</h1>
+
+    <form method="POST" action="{% url "create_topic" %}">
+        {% csrf_token %}
+        {{form}}
+        <button type="submit">Submit</button>
+        <a class="warning button" href="{% url "index" %}">Cancel</a>
+    </form>
+
+{% endblock %}
+

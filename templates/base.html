@@ -1,0 +1,36 @@
+{% load staticfiles %}
+{% load compress %}
+{% load sekizai_tags %}
+
+<!doctype html>
+<html class="no-js" lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Discussion</title>
+
+        {% compress css %}
+            <link rel="stylesheet" type="text/x-scss" href="{% static "sass/discussion.scss" %}" />
+        {% endcompress %}
+        {% render_block "css" postprocessor "compressor.contrib.sekizai.compress" %}
+
+        <script src="{% static "modernizr/modernizr.js" %}"></script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div>
+                    {% if request.user.is_authenticated %}
+                        <p>Hello <strong>{{request.user}}</strong> <a href="{% url "account_logout" %}">Log Out</a></p>
+                    {% else %}
+                        <p>Hello <strong>Guest</strong> <a href="{% url "account_login" %}">Log in</a></p>
+                    {% endif %}
+                </div>
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+
+        {% render_block "js" postprocessor "compressor.contrib.sekizai.compress" %}
+    </body>
+</html>

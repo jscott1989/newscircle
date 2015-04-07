@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Discussions</h1>
+
+    <ul>
+        {% for topic in topics %}
+            <li><a href="{% url "discussion" topic.id %}">{{topic}}</a></li>
+        {% endfor %}
+    </ul>
+
+    <a class="button" href="{% url "create_topic" %}">New Topic</a>
+
+{% endblock %}
+

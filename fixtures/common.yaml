@@ -1,0 +1,14 @@
+- model: sites.Site
+  pk: 1
+  fields:
+    domain: localhost:8000
+    name: Group Discussion
+- model: socialaccount.SocialApp
+  pk: 1
+  fields:
+    provider: facebook
+    name: Southampton Code Dojo Dev
+    secret: 7a1b810c8936340fa3d6d25c2d7ebb5c
+    client_id: 344872042384053
+    sites:
+      - 1

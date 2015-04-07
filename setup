@@ -1,0 +1,18 @@
+#!/bin/sh
+echo "Installing python dependencies";
+if [ ! -d "ve" ]; then
+    virtualenv ve;
+fi
+
+source ve/bin/activate;
+
+export DJANGO_DEBUG="1"
+
+pip install -r requirements.txt;
+
+echo "Installing bower dependencies";
+bower install;
+
+python manage.py migrate;
+
+python manage.py loaddata fixtures/common
