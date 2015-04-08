@@ -13,6 +13,15 @@
     {% addtoblock "js" %}
         <script>
             var DISCUSSION_ID = {{topic.id}};
+            var DISCUSSION_LOCKED = false;
+            var USER_AUTHENTICATED = false;
+            {% if topic.locked %}
+                DISCUSSION_LOCKED = true;
+            {% endif %}
+            {% if request.user.is_authenticated %}
+                USER_AUTHENTICATED = true;
+            {% endif %}
+
         </script>
         <!-- Libraries -->
         <script src="{% static "jquery/dist/jquery.min.js"%}"></script>

@@ -29,6 +29,11 @@ var CommentComponent = React.createClass({
             return <CommentComponent comment={comment} author={USERS.get(comment.get('author'))} />;
         }.bind(this));
 
+        var group_name = '';
+        if (this.props.author.get('group')) {
+            group_name = 'Group ' + GROUPS.get(this.props.author.get('group')).get('number');
+        }
+
         return (
             <div className="row post">
                 <div className="small-12 columns">
@@ -36,6 +41,7 @@ var CommentComponent = React.createClass({
                         <div className="small-2 columns person">
                             <img src="" />
                             <strong>{this.props.author.get('username')}</strong>
+                            <div>{group_name}</div>
                         </div>
                         <div className="small-10 columns">
                             <div className="content">
@@ -59,6 +65,9 @@ var CommentComponent = React.createClass({
 
 var ReplyComponent = React.createClass({
     render: function() {
+        if (DISCUSSION_LOCKED || !USER_AUTHENTICATED) {
+            return <div></div>;
+        }
         var csrftoken = $.cookie('csrftoken');
         return (
                 <div className="reply">

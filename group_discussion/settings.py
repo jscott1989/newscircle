@@ -110,6 +110,8 @@ TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
     # allauth specific context processors
     "allauth.account.context_processors.account",
     "allauth.socialaccount.context_processors.socialaccount",
+
+    "group_discussion.context_processors.settings"
 )
 
 TEMPLATE_DIRS = (
@@ -144,3 +146,5 @@ REST_FRAMEWORK = {
 }
 
 SITE_ID = 1
+
+ALLOW_AUTHENTICATION = True

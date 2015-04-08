@@ -10,6 +10,7 @@ class Topic(models.Model):
 
     title = models.CharField(max_length=255)
     description = models.TextField()
+    locked = models.BooleanField(default=False)
 
     def __unicode__(self):
         """ Return the title of the topic. """
@@ -29,7 +30,7 @@ class TopicUser(models.Model):
     """ An instance of a user used for a specific topic. """
 
     user = models.ForeignKey("auth.User", related_name="topic_users")
-    topic = models.ForeignKey(Topic)
+    topic = models.ForeignKey(Topic, related_name="users")
     group = models.ForeignKey(Group, null=True, related_name="users")
 
     @property
