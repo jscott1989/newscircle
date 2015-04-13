@@ -5,8 +5,15 @@ django_compressor # This allows us to use Coffeescript and SCSS
 django-libsass==0.2 # Plugin for compressor to use SCSS
 djangorestframework==3.1.1 # For passing models to javascript
 django-sekizai==0.8.1 # For adding to parent blocks
+django-periodically==0.3.0 # Periodic tasks
 
 
 # Authentication
-
 django-allauth==0.18.0 # Authentication and social auth
+
+
+# Old database
+pony==0.6
+psycopg2==2.5.4
+networkx
+hg+https://bitbucket.org/taynaud/python-louvain

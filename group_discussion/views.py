@@ -8,6 +8,7 @@ from forms import TopicForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+from datetime import datetime
 
 
 def index(request):
@@ -47,7 +48,8 @@ def reply(request, pk):
     comment = Comment(text=request.POST['text'],
                       topic=topic,
                       parent=parent,
-                      author=request.user.topic_user(topic))
+                      author=request.user.topic_user(topic),
+                      created_at=datetime.now())
     comment.save()
     return redirect("discussion", topic.pk)
 

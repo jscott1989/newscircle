@@ -21,7 +21,7 @@ class Group(models.Model):
 
     """ A group which exists within a topic. """
 
-    topic = models.ForeignKey(Topic)
+    topic = models.ForeignKey(Topic, related_name="groups")
     number = models.IntegerField()
 
 
@@ -31,7 +31,8 @@ class TopicUser(models.Model):
 
     user = models.ForeignKey("auth.User", related_name="topic_users")
     topic = models.ForeignKey(Topic, related_name="users")
-    group = models.ForeignKey(Group, null=True, related_name="users")
+    group = models.ForeignKey(Group, null=True, related_name="users",
+                              on_delete=models.SET_NULL)
 
     @property
     def username(self):
@@ -49,12 +50,13 @@ class Comment(models.Model):
 
     """ A comment by a user. """
 
+    created_at = models.DateTimeField()
     text = models.TextField()
     topic = models.ForeignKey(Topic, related_name="comments")
     parent = models.ForeignKey("Comment", null=True, related_name="replies")
     author = models.ForeignKey(TopicUser, related_name="comments")
-    liked_by = models.ManyToManyField("auth.User", related_name="likes")
-    disliked_by = models.ManyToManyField("auth.User", related_name="dislikes")
+    liked_by = models.ManyToManyField(TopicUser, related_name="likes")
+    disliked_by = models.ManyToManyField(TopicUser, related_name="dislikes")
 
     def __unicode__(self):
         """ Return the author and content of the comment. """

@@ -2,7 +2,11 @@ var User = Backbone.Model.extend({
     defaults : {
         id       : null,
         username : null
-    }
+    },
+
+    avatar_url: Backbone.Computed('username', function() {
+        return "http://www.gravatar.com/avatar/" + this.username + "?d=retro&s=500"
+    })
 });
 
 var Group = Backbone.Model.extend({
@@ -20,8 +24,21 @@ var Comment = Backbone.Model.extend({
         liked_by    : null,
         disliked_by : null,
         replies     : null
-        
-    }
+    },
+
+    group_liked_by: Backbone.Computed('liked_by', function() {
+        var group = USERS.get(this.get("author")).get("group");
+        return _.filter(this.get('liked_by'), function(id) {
+            return USERS.get(id).get("group") == group;
+        });
+    }),
+
+    group_disliked_by: Backbone.Computed('disliked_by', function() {
+        var group = USERS.get(this.get("author")).get("group");
+        return _.filter(this.get('disliked_by'), function(id) {
+            return USERS.get(id).get("group") == group;
+        })
+    })
 });
 
 var DiscussionUsers = Backbone.Collection.extend({
