@@ -31,17 +31,17 @@ var DiscussionComponent = React.createClass({
     render : function() {
         var self = this;
         
-        var groupNodes = [<GroupButton title="All Posts" id="0" changeFilter={this.changeFilter} />].concat(GROUPS.sortBy(function(group) {
-            // TODO: How do we sort groups? probably by size?
-        }).map(function(group) {
+        var groupNodes = [<GroupButton title="All Posts" id="0" changeFilter={this.changeFilter} />].concat(GROUPS.map(function(group) {
             return <GroupButton title={"Group " + group.get('number')} id={group.get('number')} changeFilter={self.changeFilter} />
         }));
 
-        var commentNodes = this.props.collection.sortBy(function(comment) {
+        var comments = this.props.collection.sortBy(function(comment) {
             if (self.state.sortBy == 'votes') {
                 return comment.get('liked_by').length - comment.get('disliked_by').length;
             } else if (self.state.sortBy == 'groups') {
-                // TODO - this probably needs something more complex than sortBy
+                // If we want to do groups, we first sort by in-group votes
+                // then further down we split it by group
+                return comment.get('group_liked_by').length - comment.get('group_disliked_by').length;
             } else {
                 return moment(comment.get('created_at'), "YYYY-MM-DDTHH:mm:ss.S")
             }
@@ -58,9 +58,59 @@ var DiscussionComponent = React.createClass({
                 group = group.get('number');
             }
             return group == self.state.filter;
-        }).reverse().map(function (comment) {
+        }).reverse();
+
+
+        if (self.state.sortBy == 'groups') {
+            // We need to split the posts by groups now
+            var groups = _.groupBy(comments, function(comment) {
+                var group_id = USERS.get(comment.get("author")).get("group");
+                if (group_id == null) return null;
+                return group_id;
+            });
+
+            // Order the groups by number of members
+            var keys = GROUPS.map(function(group) { return group.get('id') });
+            keys.push("null");
+
+            keys = _.filter(keys, function(group_id) {
+                return group_id in groups;
+            });
+
+            // Now loop through the keys in order, taking one from each until they are all exhausted
+            var hasAdded = true;
+            var comments = [];
+            while (hasAdded) {
+                hasAdded = false;
+                _.each(keys, function(group_id) {
+                    if (groups[group_id].length > 0) {
+                        hasAdded = true;
+                        comments.push(groups[group_id].pop());
+                    }
+                });
+            }
+        }
+
+
+        var commentNodes = comments.map(function (comment) {
             return <CommentComponent comment={comment} author={USERS.get(comment.get('author'))} />;
         }.bind(this));
+
+
+
+        var userNodes = USERS.filter(function(user) {
+            if (self.state.filter == '0') {
+                return true;
+            }
+
+            var group = GROUPS.get(user.get("group"));
+            if (group) {
+                group = group.get('number');
+            }
+            return group == self.state.filter;
+        }).map(function(user) {
+            return <div className="user"><img title={user.get('username')} src={user.get('avatar_url')} /></div>
+        });
 
         return (
             <div>
@@ -76,6 +126,9 @@ var DiscussionComponent = React.createClass({
                                 <option value="votes">most popular</option>
                                 <option value="chronology">most recent</option>
                             </select>
+                        </div>
+                        <div className="users">
+                            {userNodes}
                         </div>
                         {commentNodes}
                         <ReplyComponent />

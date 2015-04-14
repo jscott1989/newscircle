@@ -1,12 +1,9 @@
 var User = Backbone.Model.extend({
     defaults : {
         id       : null,
-        username : null
-    },
-
-    avatar_url: Backbone.Computed('username', function() {
-        return "http://www.gravatar.com/avatar/" + this.username + "?d=retro&s=500"
-    })
+        username : null,
+        avatar_url: null
+    }
 });
 
 var Group = Backbone.Model.extend({

@@ -51,3 +51,15 @@ $num:0;
         cursor: pointer;
     }
 }
+
+.users {
+    > div {
+        display: inline-block;
+
+        img {
+            width: 40px;
+            margin: 2px;
+            border: 2px solid black;
+        }
+    }
+}

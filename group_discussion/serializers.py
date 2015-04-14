@@ -5,7 +5,7 @@ from rest_framework import serializers
 class TopicUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = TopicUser
-        fields = ('id', 'username', 'group')
+        fields = ('id', 'username', 'group', 'avatar_url')
 
 
 class CommentSerializer(serializers.ModelSerializer):

@@ -76,9 +76,10 @@ class Command(BaseCommand):
                     communities[community_id] = []
                 communities[community_id].append(user_id)
 
-            # TODO: Flatten community ID's (remove communities with only 1 member)
+            # Flatten community ID's (remove communities with only 1 member)
             communities = [c for c in communities.values() if len(c) > 1]
-            communities = sorted(communities)
+            communities = sorted(communities, key=lambda c: len(c),
+                                 reverse=True)
 
             for community_id, user_ids in enumerate(communities, 1):
                 if len(user_ids) > 1:

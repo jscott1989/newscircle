@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+import hashlib
 
 
 class Topic(models.Model):
@@ -38,6 +39,13 @@ class TopicUser(models.Model):
     def username(self):
         """ The user's username. """
         return self.user.username
+
+    @property
+    def avatar_url(self):
+        m = hashlib.md5()
+        m.update(self.user.username)
+        return "http://www.gravatar.com/avatar/%s?d=retro&s=500" % m.hexdigest()
+    
 
 
 def get_topic_user(user, topic):
