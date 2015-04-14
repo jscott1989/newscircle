@@ -112,6 +112,12 @@ var DiscussionComponent = React.createClass({
             return <div className="user"><img title={user.get('username')} src={user.get('avatar_url')} /></div>
         });
 
+
+        var post_types = "all posts";
+        if (self.state.filter !== '0') {
+            post_types = 'all root posts by members of group ' + self.state.filter;
+        }
+
         return (
             <div>
                 <div className="row">
@@ -124,9 +130,12 @@ var DiscussionComponent = React.createClass({
                             <select onChange={this.resort} ref="sort">
                                 <option value="groups">groups</option>
                                 <option value="votes">most popular</option>
-                                <option value="chronology">most recent</option>
+                                <option value="most recent">most recent</option>
                             </select>
                         </div>
+
+                        <p id="query-statement">Showing {post_types} sorted by {self.state.sortBy}</p>
+
                         <div className="users">
                             {userNodes}
                         </div>
