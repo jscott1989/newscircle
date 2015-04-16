@@ -25,6 +25,36 @@ class Group(models.Model):
     topic = models.ForeignKey(Topic, related_name="groups")
     number = models.IntegerField()
 
+    @property
+    def comments(self):
+        """ Return comment IDs created by members of this group. """
+        return sum([[c.id for c in u.comments.all()] for u in self.users.all()], [])
+
+    @property
+    def root_comments(self):
+        """ Return comment IDs created by members of this group with no parent. """
+        return sum([[c.id for c in u.comments.filter(parent=None)] for u in self.users.all()], [])
+
+    @property
+    def representative_comment(self):
+        comments = sum([[c for c in u.comments.all()] for u in self.users.all()], [])
+
+        if len(comments) == 0:
+            return None
+
+        only_root_comments = [c for c in comments if not c.parent]
+
+        if len(only_root_comments) == 0:
+            return None
+            # comments = sorted(comments, key=lambda c : c.group_like_count(), reverse=True)
+            # return comments[0].id
+        only_root_comments = sorted(only_root_comments,
+                                    key=lambda c : c.group_like_count(), reverse=True)
+        return only_root_comments[0].id
+
+
+    
+
 
 class TopicUser(models.Model):
 
@@ -42,10 +72,8 @@ class TopicUser(models.Model):
 
     @property
     def avatar_url(self):
-        m = hashlib.md5()
-        m.update(self.user.username)
-        return "http://www.gravatar.com/avatar/%s?d=retro&s=500" % m.hexdigest()
-    
+        # TODO: Stop hotlinking - pull these avatars
+        return "https://disqus.com/api/users/avatars/%s.jpg" % self.username
 
 
 def get_topic_user(user, topic):
@@ -69,3 +97,9 @@ class Comment(models.Model):
     def __unicode__(self):
         """ Return the author and content of the comment. """
         return "<%s> %s" % (self.author.username, self.text)
+
+    def group_like_count(self):
+        group_likes = [u for u in self.liked_by.all() if u.group == self.author.group]
+        group_dislikes = [u for u in self.disliked_by.all() if u.group == self.author.group]
+        return len(group_likes) - len(group_dislikes)
+        return 1

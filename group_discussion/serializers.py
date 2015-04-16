@@ -18,4 +18,4 @@ class CommentSerializer(serializers.ModelSerializer):
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields = ('id', 'topic', 'number', 'users')
+        fields = ('id', 'topic', 'number', 'users', 'comments', 'root_comments', 'representative_comment')

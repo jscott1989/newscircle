@@ -3,13 +3,111 @@
  */
 
 
+
+function sortComments(comments, sortBy, filter, only_root) {
+    if (!filter) {
+        filter = '0';
+    }
+
+    function sortComments(comment) {
+        if (sortBy == 'votes') {
+            return comment.get('liked_by').length - comment.get('disliked_by').length;
+        } else if (sortBy == 'groups') {
+            // If we want to do groups, we first sort by in-group votes
+            // then further down we split it by group
+            return comment.get('group_liked_by').length - comment.get('group_disliked_by').length;
+        } else {
+            return moment(comment.get('created_at'), "YYYY-MM-DDTHH:mm:ss.S")
+        }
+    }
+
+    if (comments.sortBy) {
+        comments = comments.sortBy(sortComments);
+    } else {
+        comments = _.sortBy(comments, sortComments);
+    }
+
+
+    comments = comments.filter(function(comment) {
+        if (only_root && comment.get('parent') !== null) {
+            return false;
+        }
+        if (filter == '0') {
+            return true;
+        }
+
+        var group = GROUPS.get(USERS.get(comment.get("author")).get("group"));
+        if (group) {
+            group = group.get('number');
+        }
+        return group == filter;
+    }).reverse();
+
+
+    if (sortBy == 'groups') {
+        // We need to split the posts by groups now
+        var groups = _.groupBy(comments, function(comment) {
+            return USERS.get(comment.get("author")).get("group");
+        });
+
+        // Order the groups by number of members
+        var keys = GROUPS.map(function(group) { return group.get('id') });
+        keys.push("null");
+
+        // Ensure we only show groups which exist
+        keys = _.filter(keys, function(group_id) {
+            return group_id in groups;
+        });
+
+        // Now loop through the keys in order, taking one from each until they are all exhausted
+        var hasAdded = true;
+        var comments = [];
+        while (hasAdded) {
+            hasAdded = false;
+            _.each(keys, function(group_id) {
+                if (groups[group_id].length > 0) {
+                    hasAdded = true;
+                    comments.push(groups[group_id].shift());
+                }
+            });
+        }
+    }
+
+    return comments;
+}
+
+
 var GroupButton = React.createClass({
     changeFilter: function() {
         this.props.changeFilter(this.props.id);
     },
 
     render: function() {
-        return <div onClick={this.changeFilter} className={"group group_" + this.props.id}>{this.props.title}</div>;
+        var representative_comment = null;
+        if (this.props.representative_comment) {
+            representative_comment = COMMENTS.get(this.props.representative_comment);
+        }
+
+        if (representative_comment) {
+            var author = USERS.get(representative_comment.get('author'));
+            representative_comment = (<div className="representative_comment row">
+                <div className="small-4 columns person">
+                    <img src={author.get('avatar_url')} />
+                    <strong>{author.get('username')}</strong>
+                </div>
+                <div className="small-8 columns representative_text">
+                    {representative_comment.get('text')}
+                </div>
+            </div>);
+        }
+        return (
+            <div onClick={this.changeFilter} className={"group group_" + this.props.id}>
+                {this.props.title}
+                <div>{this.props.number_of_users} users</div>
+                <div>{this.props.number_of_comments} posts ({this.props.number_of_root_comments} root)</div>
+                {representative_comment}
+            </div>
+            );
     }
 })
 
@@ -31,69 +129,12 @@ var DiscussionComponent = React.createClass({
     render : function() {
         var self = this;
         
-        var groupNodes = [<GroupButton title="All Posts" id="0" changeFilter={this.changeFilter} />].concat(GROUPS.map(function(group) {
-            return <GroupButton title={"Group " + group.get('number')} id={group.get('number')} changeFilter={self.changeFilter} />
+        var groupNodes = [<GroupButton title="All Posts" id="0" number_of_users={USERS.length} number_of_comments={COMMENTS.length} number_of_root_comments="10" changeFilter={this.changeFilter} />].concat(GROUPS.map(function(group) {
+            return <GroupButton title={"Group " + group.get('number')} number_of_users={group.get('users').length} number_of_comments={group.get('comments').length} number_of_root_comments={group.get('root_comments').length} id={group.get('number')} representative_comment={group.get('representative_comment')} changeFilter={self.changeFilter} />
         }));
 
-        var comments = this.props.collection.sortBy(function(comment) {
-            if (self.state.sortBy == 'votes') {
-                return comment.get('liked_by').length - comment.get('disliked_by').length;
-            } else if (self.state.sortBy == 'groups') {
-                // If we want to do groups, we first sort by in-group votes
-                // then further down we split it by group
-                return comment.get('group_liked_by').length - comment.get('group_disliked_by').length;
-            } else {
-                return moment(comment.get('created_at'), "YYYY-MM-DDTHH:mm:ss.S")
-            }
-        }).filter(function(comment) {
-            if (comment.get('parent') !== null) {
-                return false;
-            }
-            if (self.state.filter == '0') {
-                return true;
-            }
-
-            var group = GROUPS.get(USERS.get(comment.get("author")).get("group"));
-            if (group) {
-                group = group.get('number');
-            }
-            return group == self.state.filter;
-        }).reverse();
-
-
-        if (self.state.sortBy == 'groups') {
-            // We need to split the posts by groups now
-            var groups = _.groupBy(comments, function(comment) {
-                var group_id = USERS.get(comment.get("author")).get("group");
-                if (group_id == null) return null;
-                return group_id;
-            });
-
-            // Order the groups by number of members
-            var keys = GROUPS.map(function(group) { return group.get('id') });
-            keys.push("null");
-
-            keys = _.filter(keys, function(group_id) {
-                return group_id in groups;
-            });
-
-            // Now loop through the keys in order, taking one from each until they are all exhausted
-            var hasAdded = true;
-            var comments = [];
-            while (hasAdded) {
-                hasAdded = false;
-                _.each(keys, function(group_id) {
-                    if (groups[group_id].length > 0) {
-                        hasAdded = true;
-                        comments.push(groups[group_id].pop());
-                    }
-                });
-            }
-        }
-
-
-        var commentNodes = comments.map(function (comment) {
-            return <CommentComponent comment={comment} author={USERS.get(comment.get('author'))} />;
+        var commentNodes = sortComments(this.props.collection, this.state.sortBy, this.state.filter, true).map(function (comment) {
+            return <CommentComponent comment={comment} author={USERS.get(comment.get('author'))} sortBy={this.state.sortBy} />;
         }.bind(this));
 
 
@@ -121,10 +162,10 @@ var DiscussionComponent = React.createClass({
         return (
             <div>
                 <div className="row">
-                    <div className="small-1 columns group-links">
+                    <div className="small-3 columns group-links">
                         {groupNodes}
                     </div>
-                    <div className="small-11 columns">
+                    <div className="small-9 columns">
                         <div>
                             Sort
                             <select onChange={this.resort} ref="sort">
@@ -151,9 +192,8 @@ var DiscussionComponent = React.createClass({
 
 var CommentComponent = React.createClass({
     render: function() {
-        var replyNodes = this.props.comment.get('replies').map(function (comment_id) {
-            var comment = COMMENTS.get(comment_id);
-            return <CommentComponent comment={comment} author={USERS.get(comment.get('author'))} />;
+        var replyNodes = sortComments(this.props.comment.get('replies').map(function(comment_id) { return COMMENTS.get(comment_id); }), this.props.sortBy).map(function (comment) {
+            return <CommentComponent comment={comment} author={USERS.get(comment.get('author'))} sortBy={this.props.sortBy} />;
         }.bind(this));
 
         var group_number = 0;
@@ -185,13 +225,13 @@ var CommentComponent = React.createClass({
                             <div className="info">
                                 <Time time={this.props.comment.get('created_at')} />
 
-                                <span>
+                                <span title={this.props.author.get('group') ? group_like_count + ' likes from ' + group_name + ' of ' + like_count + ' total likes' : like_count + ' likes'}>
                                     <i className="fi-like" />
-                                    {group_like_count}/{like_count}
+                                    {this.props.author.get('group') ? group_like_count + '/' : null}{like_count}
                                 </span>
-                                <span>
+                                <span title={this.props.author.get('group') ? group_dislike_count + ' dislikes from ' + group_name + ' of ' + dislike_count + ' total dislikes' : dislike_count + ' dislikes'}>
                                     <i className="fi-dislike" />
-                                    {group_dislike_count}/{dislike_count}
+                                    {this.props.author.get('group') ? group_dislike_count + '/' : null}{dislike_count}
                                 </span>
                             </div>
                             <div className="replies">
