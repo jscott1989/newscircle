@@ -27,6 +27,8 @@ var Router = Backbone.Router.extend({
         if (!sortBy) {
             sortBy = "groups";
         }
+
+        $("body").scrollTo("#discussion", 0);
         React.render(
             <DiscussionComponent collection={COMMENTS} filter={group} sortBy={sortBy} />,
             document.getElementById("discussion")

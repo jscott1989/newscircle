@@ -17,6 +17,11 @@ $fi-path: "../../foundation-icon-fonts/";
         overflow: hidden;
         text-overflow: ellipsis;
     }
+
+    .group_name {
+        cursor: pointer;
+        text-decoration: underline;
+    }
 }
 
 .info {
@@ -52,6 +57,10 @@ $num:0;
         border: 2px solid black;
         text-align: center;
         cursor: pointer;
+
+        &.active {
+            border-color: red;
+        }
 
         .representative_text {
             overflow: hidden;

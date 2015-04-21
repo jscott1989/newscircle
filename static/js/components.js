@@ -101,7 +101,7 @@ var GroupButton = React.createClass({
             </div>);
         }
         return (
-            <div onClick={this.changeFilter} className={"group group_" + this.props.id}>
+            <div onClick={this.changeFilter} className={"group group_" + this.props.id + (this.props.active ? ' active' : '')}>
                 {this.props.title}
                 <div>{this.props.number_of_users} users</div>
                 <div>{this.props.number_of_comments} posts ({this.props.number_of_root_comments} root)</div>
@@ -138,12 +138,12 @@ var DiscussionComponent = React.createClass({
     render : function() {
         var self = this;
         
-        var groupNodes = [<GroupButton title="All Posts" id="0" number_of_users={USERS.length} number_of_comments={COMMENTS.length} number_of_root_comments="10" changeFilter={this.changeFilter} />].concat(GROUPS.map(function(group) {
-            return <GroupButton title={"Group " + group.get('number')} number_of_users={group.get('users').length} number_of_comments={group.get('comments').length} number_of_root_comments={group.get('root_comments').length} id={group.get('number')} representative_comment={group.get('representative_comment')} changeFilter={self.changeFilter} />
+        var groupNodes = [<GroupButton title="All Posts" id="0" number_of_users={USERS.length} number_of_comments={COMMENTS.length} number_of_root_comments="10" changeFilter={this.changeFilter} active={this.props.filter == 0} />].concat(GROUPS.map(function(group) {
+            return <GroupButton title={"Group " + group.get('number')} active={self.props.filter == group.get('number')} number_of_users={group.get('users').length} number_of_comments={group.get('comments').length} number_of_root_comments={group.get('root_comments').length} id={group.get('number')} representative_comment={group.get('representative_comment')} changeFilter={self.changeFilter} />
         }));
 
         var commentNodes = sortComments(this.props.collection, this.props.sortBy, this.props.filter, true).map(function (comment) {
-            return <CommentComponent comment={comment} author={USERS.get(comment.get('author'))} sortBy={this.props.sortBy} />;
+            return <CommentComponent comment={comment} author={USERS.get(comment.get('author'))} sortBy={this.props.sortBy} route={this.route} />;
         }.bind(this));
 
 
@@ -205,9 +205,15 @@ var DiscussionComponent = React.createClass({
 
 
 var CommentComponent = React.createClass({
+    viewGroup: function() {
+        if (this.props.author.get('group')) {
+            this.props.route(GROUPS.get(this.props.author.get('group')).get('number'), "groups");
+        }
+    },
+
     render: function() {
         var replyNodes = sortComments(this.props.comment.get('replies').map(function(comment_id) { return COMMENTS.get(comment_id); }), this.props.sortBy).map(function (comment) {
-            return <CommentComponent comment={comment} author={USERS.get(comment.get('author'))} sortBy={this.props.sortBy} />;
+            return <CommentComponent comment={comment} author={USERS.get(comment.get('author'))} sortBy={this.props.sortBy} route={this.props.route} />;
         }.bind(this));
 
         var group_number = 0;
@@ -230,7 +236,7 @@ var CommentComponent = React.createClass({
                         <div className="small-2 columns person">
                             <img src={this.props.author.get('avatar_url')} />
                             <strong>{this.props.author.get('username')}</strong>
-                            <div>{group_name}</div>
+                            <div onClick={this.viewGroup} className="group_name">{group_name}</div>
                         </div>
                         <div className="small-10 columns">
                             <div className="content">
