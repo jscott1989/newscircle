@@ -1,24 +1,32 @@
+GROUPS = new DiscussionGroups([], {mode: "client"});
+COMMENTS = new Discussion([], {mode: "client"});
+USERS = new DiscussionUsers([], {mode: "client"});
+GROUPS.fetch({success: function() {
+    USERS.fetch({success: function() {
+        COMMENTS.fetch();
+    }});
+}});
+
 var Router = Backbone.Router.extend({
     routes : {
-        ""    : "index"
+        "group/:group"      : "group",
+        ""                  : "index"
     },
     index : function() {
-        GROUPS = new DiscussionGroups([], {mode: "client"});
-        COMMENTS = new Discussion([], {mode: "client"});
-        USERS = new DiscussionUsers([], {mode: "client"});
-        GROUPS.fetch({success: function() {
-            USERS.fetch({success: function() {
-                COMMENTS.fetch();
-            }});
-        }});
-        
         React.render(
             <DiscussionComponent collection={COMMENTS} />,
             document.getElementById("discussion")
         );
     },
+
+    group: function(group) {
+        React.render(
+            <DiscussionComponent collection={COMMENTS} filter={group} />,
+            document.getElementById("discussion")
+        );
+    }
 });
  
-new Router();
+var ROUTER = new Router();
  
-Backbone.history.start();
+Backbone.history.start({pushState: true, root: "/discussion/" + DISCUSSION_ID});

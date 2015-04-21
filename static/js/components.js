@@ -115,7 +115,11 @@ var DiscussionComponent = React.createClass({
     mixins: [BackboneMixin],
 
     changeFilter: function(f) {
-        this.setState({filter: f});
+        if (f == 0) {
+            ROUTER.navigate("/", {trigger: true});
+        } else {
+            ROUTER.navigate("group/" + f, {trigger: true});
+        }
     },
 
     getInitialState: function() {
@@ -133,14 +137,14 @@ var DiscussionComponent = React.createClass({
             return <GroupButton title={"Group " + group.get('number')} number_of_users={group.get('users').length} number_of_comments={group.get('comments').length} number_of_root_comments={group.get('root_comments').length} id={group.get('number')} representative_comment={group.get('representative_comment')} changeFilter={self.changeFilter} />
         }));
 
-        var commentNodes = sortComments(this.props.collection, this.state.sortBy, this.state.filter, true).map(function (comment) {
+        var commentNodes = sortComments(this.props.collection, this.state.sortBy, this.props.filter, true).map(function (comment) {
             return <CommentComponent comment={comment} author={USERS.get(comment.get('author'))} sortBy={this.state.sortBy} />;
         }.bind(this));
 
 
 
         var userNodes = USERS.filter(function(user) {
-            if (self.state.filter == '0') {
+            if (self.props.filter == '0') {
                 return true;
             }
 
@@ -148,15 +152,15 @@ var DiscussionComponent = React.createClass({
             if (group) {
                 group = group.get('number');
             }
-            return group == self.state.filter;
+            return group == self.props.filter;
         }).map(function(user) {
             return <div className="user"><img title={user.get('username')} src={user.get('avatar_url')} /></div>
         });
 
 
         var post_types = "all posts";
-        if (self.state.filter !== '0') {
-            post_types = 'all root posts by members of group ' + self.state.filter;
+        if (self.props.filter !== '0') {
+            post_types = 'all root posts by members of group ' + self.props.filter;
         }
 
         return (
