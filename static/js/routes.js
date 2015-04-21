@@ -9,19 +9,26 @@ GROUPS.fetch({success: function() {
 
 var Router = Backbone.Router.extend({
     routes : {
-        "group/:group"      : "group",
-        ""                  : "index"
+        "groups"               : "index_groups",
+        "votes"                : "index_votes",
+        "recent"               : "index_recent",
+        "group/:group/:order"  : "group",
+        "group/:group"         : "group",
+        ""                     : "index"
     },
+    index_groups: function() { return this.group(0, "groups")},
+    index_votes: function() { return this.group(0, "votes")},
+    index_recent: function() { return this.group(0, "recent")},
     index : function() {
-        React.render(
-            <DiscussionComponent collection={COMMENTS} />,
-            document.getElementById("discussion")
-        );
+        return this.group(0);
     },
 
-    group: function(group) {
+    group: function(group, sortBy) {
+        if (!sortBy) {
+            sortBy = "groups";
+        }
         React.render(
-            <DiscussionComponent collection={COMMENTS} filter={group} />,
+            <DiscussionComponent collection={COMMENTS} filter={group} sortBy={sortBy} />,
             document.getElementById("discussion")
         );
     }

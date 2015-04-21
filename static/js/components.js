@@ -114,20 +114,25 @@ var GroupButton = React.createClass({
 var DiscussionComponent = React.createClass({
     mixins: [BackboneMixin],
 
-    changeFilter: function(f) {
-        if (f == 0) {
-            ROUTER.navigate("/", {trigger: true});
-        } else {
-            ROUTER.navigate("group/" + f, {trigger: true});
+    route: function(filter, sort) {
+        var nav = "";
+        if (filter != 0) {
+            nav = "group/" + filter;
         }
+
+        if (sort !== "groups") {
+            nav += "/" + sort
+        }
+
+        ROUTER.navigate(nav, {trigger: true});
     },
 
-    getInitialState: function() {
-        return {filter: "0", sortBy: "groups"};
+    changeFilter: function(filter) {
+        this.route(filter, this.props.sortBy)
     },
 
     resort: function() {
-        this.setState({sortBy: React.findDOMNode(this.refs.sort).value})
+        this.route(this.props.filter, React.findDOMNode(this.refs.sort).value)
     },
 
     render : function() {
@@ -137,8 +142,8 @@ var DiscussionComponent = React.createClass({
             return <GroupButton title={"Group " + group.get('number')} number_of_users={group.get('users').length} number_of_comments={group.get('comments').length} number_of_root_comments={group.get('root_comments').length} id={group.get('number')} representative_comment={group.get('representative_comment')} changeFilter={self.changeFilter} />
         }));
 
-        var commentNodes = sortComments(this.props.collection, this.state.sortBy, this.props.filter, true).map(function (comment) {
-            return <CommentComponent comment={comment} author={USERS.get(comment.get('author'))} sortBy={this.state.sortBy} />;
+        var commentNodes = sortComments(this.props.collection, this.props.sortBy, this.props.filter, true).map(function (comment) {
+            return <CommentComponent comment={comment} author={USERS.get(comment.get('author'))} sortBy={this.props.sortBy} />;
         }.bind(this));
 
 
@@ -159,8 +164,13 @@ var DiscussionComponent = React.createClass({
 
 
         var post_types = "all posts";
-        if (self.props.filter !== '0') {
+        if (self.props.filter !== 0) {
             post_types = 'all root posts by members of group ' + self.props.filter;
+        }
+
+        var sorted_by = self.props.sortBy;
+        if (sorted_by == "recent") {
+            sorted_by = "most recent";
         }
 
         return (
@@ -173,13 +183,13 @@ var DiscussionComponent = React.createClass({
                         <div>
                             Sort
                             <select onChange={this.resort} ref="sort">
-                                <option value="groups">groups</option>
-                                <option value="votes">most popular</option>
-                                <option value="most recent">most recent</option>
+                                <option value="groups" selected={this.props.sortBy == 'groups' ? true : null}>groups</option>
+                                <option value="votes" selected={this.props.sortBy == 'votes' ? true : null}>most popular</option>
+                                <option value="recent" selected={this.props.sortBy == 'recent' ? true : null}>most recent</option>
                             </select>
                         </div>
 
-                        <p id="query-statement">Showing {post_types} sorted by {self.state.sortBy}</p>
+                        <p id="query-statement">Showing {post_types} sorted by {sorted_by}</p>
 
                         <div className="users">
                             {userNodes}
