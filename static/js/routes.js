@@ -1,9 +1,21 @@
+// This just ensures we don't re-render for each comment added
+COMMENTS_FETCHED = false;
+default_group = null;
+default_sortBy = null;
+
 GROUPS = new DiscussionGroups([], {mode: "client"});
 COMMENTS = new Discussion([], {mode: "client"});
 USERS = new DiscussionUsers([], {mode: "client"});
 GROUPS.fetch({success: function() {
     USERS.fetch({success: function() {
-        COMMENTS.fetch();
+        COMMENTS.fetch({success: function() {
+            COMMENTS_FETCHED = true;
+            React.render(
+                <DiscussionComponent collection={COMMENTS} filter={default_group} sortBy={default_sortBy} />,
+                document.getElementById("discussion")
+            );
+            $("body").scrollTo("#discussion", 0);
+        }});
     }});
 }});
 
@@ -28,11 +40,17 @@ var Router = Backbone.Router.extend({
             sortBy = "groups";
         }
 
-        $("body").scrollTo("#discussion", 0);
-        React.render(
-            <DiscussionComponent collection={COMMENTS} filter={group} sortBy={sortBy} />,
-            document.getElementById("discussion")
-        );
+        if (COMMENTS_FETCHED) {
+            React.render(
+                <DiscussionComponent collection={COMMENTS} filter={group} sortBy={sortBy} />,
+                document.getElementById("discussion")
+            );
+            $("body").scrollTo("#discussion", 0);
+        } else {
+            default_group = group;
+            default_sortBy = sortBy;
+        }
+        
     }
 });
  
