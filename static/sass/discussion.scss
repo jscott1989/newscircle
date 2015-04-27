@@ -82,3 +82,13 @@ $num:0;
         }
     }
 }
+
+.order-button {
+    border: 1px solid black;
+    display: block;
+    text-align: center;
+
+    &.active {
+        border-color: red;
+    }
+}

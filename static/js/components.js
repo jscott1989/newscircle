@@ -131,8 +131,16 @@ var DiscussionComponent = React.createClass({
         this.route(filter, this.props.sortBy)
     },
 
-    resort: function() {
-        this.route(this.props.filter, React.findDOMNode(this.refs.sort).value)
+    sort_groups: function() {
+        this.route(this.props.filter, "groups")
+    },
+
+    sort_votes: function() {
+        this.route(this.props.filter, "votes")
+    },
+
+    sort_recent: function() {
+        this.route(this.props.filter, "recent")
     },
 
     render : function() {
@@ -142,9 +150,15 @@ var DiscussionComponent = React.createClass({
             return <GroupButton title={"Group " + group.get('number')} active={self.props.filter == group.get('number')} number_of_users={group.get('users').length} number_of_comments={group.get('comments').length} number_of_root_comments={group.get('root_comments').length} id={group.get('number')} representative_comment={group.get('representative_comment')} changeFilter={self.changeFilter} />
         }));
 
-        var commentNodes = sortComments(this.props.collection, this.props.sortBy, this.props.filter, true).map(function (comment) {
+        var comments = sortComments(this.props.collection, this.props.sortBy, this.props.filter, true);
+
+        var commentNodes = comments.map(function (comment) {
             return <CommentComponent comment={comment} author={USERS.get(comment.get('author'))} sortBy={this.props.sortBy} route={this.route} />;
         }.bind(this));
+
+        if (comments.length == 0) {
+            commentNodes = <div className="alert-box">No posts to show in this view.</div>
+        }
 
 
 
@@ -180,16 +194,16 @@ var DiscussionComponent = React.createClass({
                         {groupNodes}
                     </div>
                     <div className="small-9 columns">
-                        <div>
-                            Sort
-                            <select onChange={this.resort} ref="sort">
-                                <option value="groups" selected={this.props.sortBy == 'groups' ? true : null}>groups</option>
-                                <option value="votes" selected={this.props.sortBy == 'votes' ? true : null}>most popular</option>
-                                <option value="recent" selected={this.props.sortBy == 'recent' ? true : null}>most recent</option>
-                            </select>
+                        <div className="row">
+                            <div className="small-9 columns">
+                                <p id="query-statement">Showing {post_types} sorted by {sorted_by}</p>
+                            </div>
+                            <div className="small-3 columns">
+                                <a className={'order-button' + (this.props.sortBy == 'groups' ? ' active' : '')} onClick={this.sort_groups} title="Order by groups">Order by groups</a>
+                                <a className={'order-button' + (this.props.sortBy == 'votes' ? ' active' : '')} onClick={this.sort_votes} title="Order by votes">Order by votes</a>
+                                <a className={'order-button' + (this.props.sortBy == 'recent' ? ' active' : '')} onClick={this.sort_recent} title="Order by most recent">Order by most recent</a>
+                            </div>
                         </div>
-
-                        <p id="query-statement">Showing {post_types} sorted by {sorted_by}</p>
 
                         <div className="users">
                             {userNodes}
