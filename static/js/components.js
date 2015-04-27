@@ -145,8 +145,10 @@ var DiscussionComponent = React.createClass({
 
     render : function() {
         var self = this;
+
+        var number_of_root_comments = COMMENTS.filter(function (c) { return !c.get('parent')}).length;
         
-        var groupNodes = [<GroupButton title="All Posts" id="0" number_of_users={USERS.length} number_of_comments={COMMENTS.length} number_of_root_comments="10" changeFilter={this.changeFilter} active={this.props.filter == 0} />].concat(GROUPS.map(function(group) {
+        var groupNodes = [<GroupButton title="All Posts" id="0" number_of_users={USERS.length} number_of_comments={COMMENTS.length} number_of_root_comments={number_of_root_comments} changeFilter={this.changeFilter} active={this.props.filter == 0} />].concat(GROUPS.map(function(group) {
             return <GroupButton title={"Group " + group.get('number')} active={self.props.filter == group.get('number')} number_of_users={group.get('users').length} number_of_comments={group.get('comments').length} number_of_root_comments={group.get('root_comments').length} id={group.get('number')} representative_comment={group.get('representative_comment')} changeFilter={self.changeFilter} />
         }));
 
