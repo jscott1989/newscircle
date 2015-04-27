@@ -52,11 +52,11 @@ $num:0;
 
 .group-links {
     .group {
-        width: 100%;
         margin-bottom: 10px;
         border: 2px solid black;
         text-align: center;
         cursor: pointer;
+        height: 9em;
 
         &.active {
             border-color: red;
@@ -64,7 +64,7 @@ $num:0;
 
         .representative_text {
             overflow: hidden;
-            max-height: 100px;
+            max-height: 7em;
             text-align: left;
             font-size: 0.8em;
         }

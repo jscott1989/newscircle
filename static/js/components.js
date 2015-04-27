@@ -91,21 +91,22 @@ var GroupButton = React.createClass({
         if (representative_comment) {
             var author = USERS.get(representative_comment.get('author'));
             representative_comment = (<div className="representative_comment row">
-                <div className="small-4 columns person">
+                <div className="small-3 columns person">
                     <img src={author.get('avatar_url')} />
-                    <strong>{author.get('username')}</strong>
+                    <strong title={author.get('username')}>{author.get('username')}</strong>
                 </div>
-                <div className="small-8 columns representative_text">
+                <div className="small-9 columns representative_text">
                     {representative_comment.get('text')}
                 </div>
             </div>);
         }
         return (
-            <div onClick={this.changeFilter} className={"group group_" + this.props.id + (this.props.active ? ' active' : '')}>
-                {this.props.title}
-                <div>{this.props.number_of_users} users</div>
-                <div>{this.props.number_of_comments} posts ({this.props.number_of_root_comments} root)</div>
-                {representative_comment}
+            <div className="small-4 columns">
+                <div onClick={this.changeFilter} className={"group group_" + this.props.id + (this.props.active ? ' active' : '')}>
+                    {this.props.title}
+                    <div>{this.props.number_of_users} users - {this.props.number_of_comments} posts ({this.props.number_of_root_comments} root)</div>
+                    {representative_comment}
+                </div>
             </div>
             );
     }
@@ -192,10 +193,10 @@ var DiscussionComponent = React.createClass({
         return (
             <div>
                 <div className="row">
-                    <div className="small-3 columns group-links">
-                        {groupNodes}
-                    </div>
-                    <div className="small-9 columns">
+                    <div className="small-12 columns">
+                        <div className="row group-links">
+                            {groupNodes}
+                        </div>
                         <div className="row" id="introduction-row">
                             <div className="small-11 columns">
                                 <p id="query-statement">Showing {post_types} sorted by {sorted_by}</p>
