@@ -196,19 +196,19 @@ var DiscussionComponent = React.createClass({
                         {groupNodes}
                     </div>
                     <div className="small-9 columns">
-                        <div className="row">
-                            <div className="small-9 columns">
+                        <div className="row" id="introduction-row">
+                            <div className="small-11 columns">
                                 <p id="query-statement">Showing {post_types} sorted by {sorted_by}</p>
-                            </div>
-                            <div className="small-3 columns">
-                                <a className={'order-button' + (this.props.sortBy == 'groups' ? ' active' : '')} onClick={this.sort_groups} title="Order by groups">Order by groups</a>
-                                <a className={'order-button' + (this.props.sortBy == 'votes' ? ' active' : '')} onClick={this.sort_votes} title="Order by votes">Order by votes</a>
-                                <a className={'order-button' + (this.props.sortBy == 'recent' ? ' active' : '')} onClick={this.sort_recent} title="Order by most recent">Order by most recent</a>
-                            </div>
-                        </div>
 
-                        <div className="users">
-                            {userNodes}
+                                <div className="users">
+                                    {userNodes}
+                                </div>
+                            </div>
+                            <div className="small-1 columns">
+                                <a className={'order-groups order-button' + (this.props.sortBy == 'groups' ? ' active' : '')} onClick={this.sort_groups} title="Order by groups"><img src="/static/img/group.png" /></a>
+                                <a className={'order-votes order-button' + (this.props.sortBy == 'votes' ? ' active' : '')} onClick={this.sort_votes} title="Order by votes"><img src="/static/img/like.png" /></a>
+                                <a className={'order-recent order-button' + (this.props.sortBy == 'recent' ? ' active' : '')} onClick={this.sort_recent} title="Order by most recent"><img src="/static/img/clock.png" /></a>
+                            </div>
                         </div>
                         {commentNodes}
                         <ReplyComponent />

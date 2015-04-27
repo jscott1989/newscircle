@@ -83,12 +83,31 @@ $num:0;
     }
 }
 
+#introduction-row {
+    min-height: 9em;
+}
+
 .order-button {
-    border: 1px solid black;
     display: block;
     text-align: center;
+    opacity: 0.5;
 
-    &.active {
-        border-color: red;
+    &.active, &:hover {
+        opacity: 1;
     }
+
+    img {
+        width: 32px;
+    }
+}
+
+.order-recent {
+    img {
+        margin-top: 5px;
+    }
+}
+
+#query-statement {
+    font-weight: bold;
+    font-size: 1.1em;
 }
