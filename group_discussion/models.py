@@ -17,6 +17,11 @@ class Topic(models.Model):
         """ Return the title of the topic. """
         return self.title
 
+    @property
+    def root_comments(self):
+        """ Return all root comments. """
+        return [c for c in self.comments if not self.parent]
+
 
 class Group(models.Model):
 

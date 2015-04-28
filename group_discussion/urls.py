@@ -17,6 +17,8 @@ urlpatterns = patterns(
         name='reply'),
     url(r'^discussion/(?P<pk>\d+)', 'group_discussion.views.discussion',
         name='discussion'),
+    url(r'^simple/(?P<pk>\d+)', 'group_discussion.views.simple_discussion',
+        name='simple_discussion'),
 
     url(r'^admin/', include(admin.site.urls)),
     (r'^accounts/', include('allauth.urls')),

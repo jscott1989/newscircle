@@ -35,6 +35,12 @@ def discussion(request, pk):
     return render(request, "discussion.html", {"topic": topic})
 
 
+def simple_discussion(request, pk):
+    """ View an individual discussion using a simple interface. """
+    topic = get_object_or_404(Topic, pk=pk)
+    return render(request, "simple_discussion.html", {"topic": topic})
+
+
 @login_required
 @require_POST
 def reply(request, pk):
