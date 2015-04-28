@@ -38,11 +38,11 @@
 
         <!-- Application code -->
         <script type="text/jsx" src="{% static "js/models.js"%}"></script>
-        <script type="text/jsx" src="{% static "js/components.js"%}"></script>
+        <script type="text/jsx" src="{% static "js/simple_components.js"%}"></script>
         <script type="text/jsx" src="{% static "js/routes.js"%}"></script>
         <script>
             var ROUTER = new Router();
-            Backbone.history.start({pushState: true, root: "/discussion/" + DISCUSSION_ID});
+            Backbone.history.start({pushState: true, root: "/simple/" + DISCUSSION_ID});
         </script>
     {% endaddtoblock %}
 {% endblock %}

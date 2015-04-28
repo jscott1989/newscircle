@@ -91,22 +91,20 @@ var GroupButton = React.createClass({
         if (representative_comment) {
             var author = USERS.get(representative_comment.get('author'));
             representative_comment = (<div className="representative_comment row">
-                <div className="small-3 columns person">
+                <div className="small-4 columns person">
                     <img src={author.get('avatar_url')} />
-                    <strong title={author.get('username')}>{author.get('username')}</strong>
                 </div>
-                <div className="small-9 columns representative_text">
+                <div className="small-8 columns representative_text">
+                    <div><strong>{author.get('username')}</strong></div>
                     {representative_comment.get('text')}
                 </div>
             </div>);
         }
         return (
-            <div className="small-4 columns">
-                <div onClick={this.changeFilter} className={"group group_" + this.props.id + (this.props.active ? ' active' : '')}>
-                    {this.props.title}
-                    <div>{this.props.number_of_users} users - {this.props.number_of_comments} posts ({this.props.number_of_root_comments} root)</div>
-                    {representative_comment}
-                </div>
+            <div onClick={this.changeFilter} className={"group group_" + this.props.id + (this.props.active ? ' active' : '')}>
+                {this.props.title}
+                <div>{this.props.number_of_users} users {this.props.number_of_comments} posts ({this.props.number_of_root_comments} root)</div>
+                {representative_comment}
             </div>
             );
     }
@@ -252,10 +250,12 @@ var CommentComponent = React.createClass({
                     <div className="row">
                         <div className="small-2 columns person">
                             <img src={this.props.author.get('avatar_url')} />
-                            <strong>{this.props.author.get('username')}</strong>
-                            <div onClick={this.viewGroup} className="group_name">{group_name}</div>
                         </div>
                         <div className="small-10 columns">
+                            <div className="author-info">
+                                <strong>{this.props.author.get('username')}</strong>
+                                <div onClick={this.viewGroup} className="group_name">{group_name}</div>
+                            </div>
                             <div className="content">
                                 <p>{this.props.comment.get('text')}</p>
                             </div>

@@ -53,7 +53,3 @@ var Router = Backbone.Router.extend({
         
     }
 });
- 
-var ROUTER = new Router();
- 
-Backbone.history.start({pushState: true, root: "/discussion/" + DISCUSSION_ID});

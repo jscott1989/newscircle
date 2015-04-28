@@ -6,16 +6,15 @@ $fi-path: "../../foundation-icon-fonts/";
 @import "../bower_components/foundation-icon-fonts/foundation-icons";
 
 .person {
-    text-align: center;
+    text-align: right;
 
-    strong {
-        font-size: 0.8em;
-        display: block;
-        text-align: center;
+    
+}
 
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+.author-info {
+    > * {
+        display: inline-block;
+        margin-right: 1em;
     }
 
     .group_name {
@@ -25,14 +24,21 @@ $fi-path: "../../foundation-icon-fonts/";
 }
 
 .info {
+    color: gray;
     > * {
         display: inline-block;
         margin-right: 1em;
     }
 }
 
+.content p {
+    margin-bottom: 0;
+}
+
 .post {
     margin-bottom: 0.5em !important;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
 }
 
 $group_bg_colours: #FFF, #000,#DDBF37,#4D1E61,#BB4F24,#86BCCE,#94132A,#A9A96B,#636663,#4D8F37,#B86590,#36598D,#BB654C,#2C2369,#C7862B,#6A1864,#D9DF4A,#501416,#779630,#482417,#AB1D20,#1D2416;
@@ -110,4 +116,29 @@ $num:0;
 #query-statement {
     font-weight: bold;
     font-size: 1.1em;
+}
+
+.fi-like, .fi-dislike {
+    margin-right: 0.2em;
+}
+
+// SIMPLE
+#comments-count {
+    font-size: 2em;
+}
+
+.simple-order-button {
+    opacity: 0.5;
+
+    &.order-votes {
+        margin-right: 1em;
+    }
+
+    &.active, &:hover {
+        opacity: 1;
+    }
+
+    img {
+        width: 32px;
+    }
 }
