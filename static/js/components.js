@@ -101,10 +101,12 @@ var GroupButton = React.createClass({
             </div>);
         }
         return (
-            <div onClick={this.changeFilter} className={"group group_" + this.props.id + (this.props.active ? ' active' : '')}>
-                {this.props.title}
-                <div>{this.props.number_of_users} users {this.props.number_of_comments} posts ({this.props.number_of_root_comments} root)</div>
-                {representative_comment}
+            <div className="small-4 columns">
+                <div onClick={this.changeFilter} className={"group group_" + this.props.id + (this.props.active ? ' active' : '')}>
+                    {this.props.title}
+                    <div>{this.props.number_of_users} users {this.props.number_of_comments} posts ({this.props.number_of_root_comments} root)</div>
+                    {representative_comment}
+                </div>
             </div>
             );
     }
