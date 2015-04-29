@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from datetime import datetime
+from rest_framework.renderers import JSONRenderer
 
 
 def index(request):
@@ -32,7 +33,15 @@ def create_topic(request):
 def discussion(request, pk):
     """ View an individual discussion. """
     topic = get_object_or_404(Topic, pk=pk)
-    return render(request, "discussion.html", {"topic": topic})
+    r = JSONRenderer()
+    comments = r.render([CommentSerializer(c).data
+                        for c in topic.comments.all()])
+    users = r.render([TopicUserSerializer(u).data for u in topic.users.all()])
+    groups = r.render([GroupSerializer(g).data for g in topic.groups.all()])
+    return render(request, "discussion.html", {"topic": topic,
+                                               "comments": comments,
+                                               "users": users,
+                                               "groups": groups})
 
 
 def simple_discussion(request, pk):

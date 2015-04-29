@@ -37,6 +37,11 @@
         <script src="{% static "js/lib/BackboneMixin.js"%}"></script>
 
         <!-- Application code -->
+        <script>
+            var STARTING_COMMENTS = {{comments|safe}};
+            var STARTING_USERS = {{users|safe}};
+            var STARTING_GROUPS = {{groups|safe}};
+        </script>
         <script type="text/jsx" src="{% static "js/models.js"%}"></script>
         <script type="text/jsx" src="{% static "js/components.js"%}"></script>
         <script type="text/jsx" src="{% static "js/routes.js"%}"></script>
