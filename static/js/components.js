@@ -177,31 +177,49 @@ var DiscussionComponent = React.createClass({
             commentNodes = <div className="alert-box">No posts to show in this view.</div>
         }
 
+        if (self.props.filter === 0) {
+            // No need to show all users
+            userNodes = '';
+        } else {
+            var userNodes = USERS.filter(function(user) {
+                if (self.props.filter == '0') {
+                    return true;
+                } else if (self.props.filter == '-1') {
+                    return user.get("group") == null;
+                }
 
-
-        var userNodes = USERS.filter(function(user) {
-            if (self.props.filter == '0') {
-                return true;
-            }
-
-            var group = GROUPS.get(user.get("group"));
-            if (group) {
-                group = group.get('number');
-            }
-            return group == self.props.filter;
-        }).map(function(user) {
-            return <div className="user"><img title={user.get('username')} src={user.get('avatar_url')} /></div>
-        });
+                var group = GROUPS.get(user.get("group"));
+                if (group) {
+                    group = group.get('number');
+                }
+                return group == self.props.filter;
+            }).map(function(user) {
+                return <div className="user"><img title={user.get('username')} src={user.get('avatar_url')} /></div>
+            });
+        }
 
 
         var post_types = "all posts";
-        if (self.props.filter !== 0) {
+        if (self.props.filter == -1) {
+            post_types = 'all root posts by ungrouped members';
+        }
+        else if (self.props.filter !== 0) {
             post_types = 'all root posts by members of group ' + self.props.filter;
         }
 
         var sorted_by = self.props.sortBy;
         if (sorted_by == "recent") {
             sorted_by = "most recent";
+        }
+
+        if (sorted_by == 'groups') {
+            if (self.props.filter == -1) {
+                // On other we don't have "group votes"
+                sorted_by = 'votes';
+            } else if (self.props.filter > 0) {
+                // Within a group we can only order by in-group votes
+                sorted_by = 'group votes';
+            }
         }
 
         return (
