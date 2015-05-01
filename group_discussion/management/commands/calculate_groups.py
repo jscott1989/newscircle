@@ -81,6 +81,9 @@ class Command(BaseCommand):
             communities = sorted(communities, key=lambda c: len(c),
                                  reverse=True)
 
+            # Limit to 7 groups, everyone else goes into "other"
+            communities = communities[:7]
+
             for community_id, user_ids in enumerate(communities, 1):
                 if len(user_ids) > 1:
                     community = Group(topic=topic, number=community_id)

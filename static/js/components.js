@@ -34,6 +34,8 @@ function sortComments(comments, sortBy, filter, only_root) {
         }
         if (filter == '0') {
             return true;
+        } else if (filter == '-1') {
+            return USERS.get(comment.get("author")).get("group") == null;
         }
 
         var group = GROUPS.get(USERS.get(comment.get("author")).get("group"));
@@ -148,10 +150,22 @@ var DiscussionComponent = React.createClass({
         var self = this;
 
         var number_of_root_comments = COMMENTS.filter(function (c) { return !c.get('parent')}).length;
+
+        var number_of_ungrouped_comments = COMMENTS.length - _.reduce(GROUPS.map(function(group) {
+            return group.get('comments').length;
+        }), function(m, x) {return m + x;}, 0);
+
+        var number_of_ungrouped_root_comments = number_of_root_comments - _.reduce(GROUPS.map(function(group) {
+            return group.get('root_comments').length;
+        }), function(m, x) {return m + x;}, 0);
+
+        var number_of_ungrouped_users = USERS.length - _.reduce(GROUPS.map(function(group) {
+            return group.get('users').length;
+        }), function(m, x) {return m + x;}, 0);
         
         var groupNodes = [<GroupButton title="All Posts" id="0" number_of_users={USERS.length} number_of_comments={COMMENTS.length} number_of_root_comments={number_of_root_comments} changeFilter={this.changeFilter} active={this.props.filter == 0} />].concat(GROUPS.map(function(group) {
             return <GroupButton title={"Group " + group.get('number')} active={self.props.filter == group.get('number')} number_of_users={group.get('users').length} number_of_comments={group.get('comments').length} number_of_root_comments={group.get('root_comments').length} id={group.get('number')} representative_comment={group.get('representative_comment')} changeFilter={self.changeFilter} />
-        }));
+        })).concat([<GroupButton title="Other" id="-1" number_of_users={number_of_ungrouped_users} number_of_comments={number_of_ungrouped_comments} number_of_root_comments={number_of_ungrouped_root_comments} changeFilter={this.changeFilter} active={this.props.filter == -1} />]);
 
         var comments = sortComments(this.props.collection, this.props.sortBy, this.props.filter, true);
 
