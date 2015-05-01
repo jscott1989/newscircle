@@ -193,9 +193,17 @@ var DiscussionComponent = React.createClass({
                     group = group.get('number');
                 }
                 return group == self.props.filter;
-            }).map(function(user) {
-                return <div className="user"><img title={user.get('username')} src={user.get('avatar_url')} /></div>
             });
+
+            var total_filtered_users = userNodes.length;
+
+            userNodes = userNodes.map(function(user) {
+                return <div className="user"><img title={user.get('username')} src={user.get('avatar_url')} /></div>
+            }).slice(0, 37);
+
+            if (total_filtered_users > userNodes.length) {
+                userNodes = userNodes.concat([<div>and {total_filtered_users - userNodes.length} more users.</div>]);
+            }
         }
 
 
