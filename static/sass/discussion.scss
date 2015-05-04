@@ -41,15 +41,15 @@ $fi-path: "../../foundation-icon-fonts/";
     padding-bottom: 0.5em;
 }
 
-$group_bg_colours: #FFF, #000,#DDBF37,#4D1E61,#BB4F24,#86BCCE,#94132A,#A9A96B,#636663,#4D8F37,#B86590,#36598D,#BB654C,#2C2369,#C7862B,#6A1864,#D9DF4A,#501416,#779630,#482417,#AB1D20,#1D2416;
-$group_fg_colours: #000, #FFF,#000,#FFF,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000;
+$group_bg_colours: #FFF, #DDBF37,#BB4F24,#94132A,#A9A96B,#636663,#4D8F37,#B86590,#36598D,#BB654C,#2C2369,#C7862B,#6A1864,#D9DF4A,#501416,#779630,#482417,#AB1D20,#1D2416;
+$group_fg_colours: #000, #000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000;
 
 
 $num:0;
     @each $color in $group_bg_colours {
         .group_#{$num} {
             $num: $num + 1;
-            background-color: $color;
+            background-color: lighten($color, 30%);
             border-color: nth($group_fg_colours, $num);
             color: nth($group_fg_colours, $num);
         }
