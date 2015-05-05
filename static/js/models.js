@@ -3,6 +3,10 @@ var User = Backbone.Model.extend({
         id       : null,
         username : null,
         avatar_url: null
+    },
+
+    comparator: function(user){
+        return(user.get( 'group_centrality' ));
     }
 });
 

@@ -64,6 +64,7 @@ $num:0;
         text-align: center;
         cursor: pointer;
         height: 9em;
+        overflow: hidden;
 
         &.active {
             border-color: #ea8888;

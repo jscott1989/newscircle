@@ -69,6 +69,8 @@ class TopicUser(models.Model):
     topic = models.ForeignKey(Topic, related_name="users")
     group = models.ForeignKey(Group, null=True, related_name="users",
                               on_delete=models.SET_NULL)
+    # This represents the number of in-group links per out-group link
+    group_centrality = models.IntegerField(null=True)
 
     @property
     def username(self):

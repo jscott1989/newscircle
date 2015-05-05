@@ -54,6 +54,18 @@ class Command(BaseCommand):
                 # Users who like/dislike the opposite thing get decreased relationship
                 for usera, userb in itertools.product(likers, dislikers):
                     change_relationship(users, usera, userb, -1)
+
+            def get_group_centrality(user_id, user_ids):
+                in_likes = 0
+                out_likes = 0
+
+                for u, v in users.get(user_id, {}).items():
+                    if u in user_ids:
+                        in_likes += v
+                    else:
+                        out_likes += v
+
+                return in_likes - out_likes
             
             g = Graph()
 
@@ -91,6 +103,8 @@ class Command(BaseCommand):
                     for user_id in user_ids:
                         t = TopicUser.objects.get(pk=user_id)
                         t.group = community
+                        t.group_centrality = get_group_centrality(user_id,
+                                                                  user_ids)
                         t.save()
 
             self.stdout.write('Finished calculating %s' % topic)
