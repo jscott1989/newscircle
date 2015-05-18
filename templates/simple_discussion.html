@@ -32,11 +32,17 @@
         <script src="{% static "react/react.min.js"%}"></script>
         <script src="{% static "backbone/backbone.js"%}"></script>
         <script src="{% static "backbone-computed-properties/dist/backbone-computed.min.js"%}"></script>
+        <script src="{% static "foundation/js/foundation.min.js"%}"></script>
 
         <!-- External code -->
         <script src="{% static "js/lib/BackboneMixin.js"%}"></script>
 
         <!-- Application code -->
+        <script>
+            var STARTING_GROUPS = [];
+            var STARTING_USERS = {{users|safe}};
+            var STARTING_COMMENTS = {{comments|safe}};
+        </script>
         <script type="text/jsx" src="{% static "js/models.js"%}"></script>
         <script type="text/jsx" src="{% static "js/simple_components.js"%}"></script>
         <script type="text/jsx" src="{% static "js/routes.js"%}"></script>

@@ -20,6 +20,11 @@ $fi-path: "../../foundation-icon-fonts/";
     .group_name {
         cursor: pointer;
         text-decoration: underline;
+
+        &.no-group {
+            cursor: default;
+            text-decoration: none;
+        }
     }
 }
 

@@ -6,7 +6,7 @@ var User = Backbone.Model.extend({
     },
 
     comparator: function(user){
-        return(user.get( 'group_centrality' ));
+        return(user.get('group_centrality'));
     }
 });
 

@@ -28,5 +28,6 @@ var Router = Backbone.Router.extend({
             document.getElementById("discussion")
         );
         $("body").scrollTo("#discussion", 0);
+        $(document).foundation('reflow');
     }
 });

@@ -14,7 +14,8 @@ from rest_framework.renderers import JSONRenderer
 
 def index(request):
     """ List all topics. """
-    return render(request, "index.html", {"topics": Topic.objects.all()})
+    # We use "locked" to hide the test topic temporarily
+    return render(request, "index.html", {"topics": Topic.objects.filter(locked=1)})
 
 
 @login_required
@@ -47,7 +48,14 @@ def discussion(request, pk):
 def simple_discussion(request, pk):
     """ View an individual discussion using a simple interface. """
     topic = get_object_or_404(Topic, pk=pk)
-    return render(request, "simple_discussion.html", {"topic": topic})
+    r = JSONRenderer()
+    comments = r.render([CommentSerializer(c).data
+                        for c in topic.comments.all()])
+    users = r.render([TopicUserSerializer(u).data for u in topic.users.all()])
+    topic = get_object_or_404(Topic, pk=pk)
+    return render(request, "simple_discussion.html", {"topic": topic,
+                                                      "comments": comments,
+                                                      "users": users})
 
 
 @login_required

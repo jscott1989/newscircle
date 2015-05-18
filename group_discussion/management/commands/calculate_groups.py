@@ -107,4 +107,4 @@ class Command(BaseCommand):
                                                                   user_ids)
                         t.save()
 
-            self.stdout.write('Finished calculating %s' % topic)
+            self.stdout.write('Finished calculating')

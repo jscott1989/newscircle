@@ -101,12 +101,20 @@ var GroupButton = React.createClass({
                     {representative_comment.get('text')}
                 </div>
             </div>);
+        } else {
+            representative_comment = (<div className="representative_comment row">
+                <div className="small-4 columns person">
+                    <img src="https://disqus.com/api/users/avatars/nhslck.jpg" />
+                </div>
+                <div className="small-8 columns representative_text">
+                </div>
+            </div>);
         }
         return (
             <div className="small-4 columns">
                 <div onClick={this.changeFilter} className={"group group_" + this.props.id + (this.props.active ? ' active' : '')}>
                     {this.props.title}
-                    <div>{this.props.number_of_users} users {this.props.number_of_comments} posts ({this.props.number_of_root_comments} root)</div>
+                    <div>{this.props.number_of_users} users {this.props.number_of_root_comments} root posts ({this.props.number_of_comments} total posts)</div>
                     {representative_comment}
                 </div>
             </div>
@@ -174,7 +182,7 @@ var DiscussionComponent = React.createClass({
         }.bind(this));
 
         if (comments.length == 0) {
-            commentNodes = <div className="alert-box">No posts to show in this view.</div>
+            commentNodes = <div className="alert-box">No root posts to show for this group.</div>
         }
 
         if (self.props.filter === 0) {
@@ -198,7 +206,7 @@ var DiscussionComponent = React.createClass({
             var total_filtered_users = userNodes.length;
 
             userNodes = userNodes.map(function(user) {
-                return <div className="user"><img title={user.get('username')} src={user.get('avatar_url')} /></div>
+                return <div className="user"><img data-tooltip aria-haspopup="true" class="has-tip" title={user.get('username')} src={user.get('avatar_url')} /></div>
             }).slice(0, 37);
 
             if (total_filtered_users > userNodes.length) {
@@ -278,6 +286,8 @@ var CommentComponent = React.createClass({
         if (this.props.author.get('group')) {
             group_number = GROUPS.get(this.props.author.get('group')).get('number');
             group_name = 'Group ' + group_number;
+        } else {
+            group_name = 'No Group'
         }
 
         var group_like_count = this.props.comment.get('group_liked_by').length;
@@ -296,7 +306,7 @@ var CommentComponent = React.createClass({
                         <div className="small-10 columns">
                             <div className="author-info">
                                 <strong>{this.props.author.get('username')}</strong>
-                                <div onClick={this.viewGroup} className="group_name">{group_name}</div>
+                                <div onClick={this.viewGroup} className={"group_name" + (this.props.author.get('group') ? '' : ' no-group')}>{group_name}</div>
                             </div>
                             <div className="content">
                                 <p>{this.props.comment.get('text')}</p>
