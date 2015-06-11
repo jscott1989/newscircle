@@ -3,11 +3,23 @@
 {% load sekizai_tags %}
 
 {% block content %}
-    <a href="{% url "index" %}">Back to index</a>
     <h1>{{topic.title}}</h1>
     <p>{{topic.description}}</p>
-    <div id="discussion">
+    <div class="row">
+        <div class="small-8 columns">
+            <div id="discussion">
 
+            </div>
+        </div>
+        <div class="small-4 columns">
+            <div class="users">{{total_users}} total users</div>
+            <div class="users">{{total_active_users}} users here now</div>
+            <h2>UK News</h2>
+
+            <p>This is a forum for discussing UK news topics.</p>
+
+            <p>This is part of study #12345 at the University of Southampton. <a href="#">Click here for more information</a>.</p>
+        </div>
     </div>
 
     {% addtoblock "js" %}
@@ -15,11 +27,13 @@
             var DISCUSSION_ID = {{topic.id}};
             var DISCUSSION_LOCKED = false;
             var USER_AUTHENTICATED = false;
+            var CURRENT_USER_ID = 0;
             {% if topic.locked %}
                 DISCUSSION_LOCKED = true;
             {% endif %}
             {% if request.user.is_authenticated %}
                 USER_AUTHENTICATED = true;
+                var CURRENT_USER_ID = {{topic_user.id}};
             {% endif %}
 
         </script>
@@ -30,6 +44,7 @@
         <script src="{% static "moment/moment.js"%}"></script>
         <script src="{% static "underscore/underscore-min.js"%}"></script>
         <script src="{% static "react/react.min.js"%}"></script>
+        <script src="{% static "react-magic-move/dist/react-magic-move.js"%}"></script>
         <script src="{% static "backbone/backbone.js"%}"></script>
         <script src="{% static "backbone-computed-properties/dist/backbone-computed.min.js"%}"></script>
         <script src="{% static "foundation/js/foundation.min.js"%}"></script>
@@ -42,6 +57,36 @@
             var STARTING_COMMENTS = {{comments|safe}};
             var STARTING_USERS = {{users|safe}};
             var STARTING_GROUPS = {{groups|safe}};
+
+
+            var csrftoken = $.cookie('csrftoken');
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+            function sameOrigin(url) {
+                // test that a given url is a same-origin URL
+                // url could be relative or scheme relative or absolute
+                var host = document.location.host; // host + port
+                var protocol = document.location.protocol;
+                var sr_origin = '//' + host;
+                var origin = protocol + sr_origin;
+                // Allow absolute or scheme relative URLs to same origin
+                return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+                    (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+                    // or any other URL that isn't scheme relative or absolute i.e relative.
+                    !(/^(\/\/|http:|https:).*/.test(url));
+            }
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                        // Send the token to same-origin, relative URLs only.
+                        // Send the token only if the method warrants CSRF protection
+                        // Using the CSRFToken value acquired earlier
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
         </script>
         <script type="text/jsx" src="{% static "js/models.js"%}"></script>
         <script type="text/jsx" src="{% static "js/components.js"%}"></script>

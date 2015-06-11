@@ -9,13 +9,15 @@ function sortComments(comments, sortBy, filter, only_root) {
         filter = '0';
     }
 
+    comments = comments.filter(function(c) { return c });
+
     function sortComments(comment) {
         if (sortBy == 'votes') {
             return comment.get('liked_by').length - comment.get('disliked_by').length;
         } else if (sortBy == 'groups') {
             // If we want to do groups, we first sort by in-group votes
             // then further down we split it by group
-            return comment.get('group_liked_by').length - comment.get('group_disliked_by').length;
+            return comment.group_liked_by().length - comment.group_disliked_by().length;
         } else {
             return moment(comment.get('created_at'), "YYYY-MM-DDTHH:mm:ss.S")
         }
@@ -78,6 +80,54 @@ function sortComments(comments, sortBy, filter, only_root) {
     return comments;
 }
 
+var GroupButtons = React.createClass({
+    changeFilter: function(filter) {
+        this.props.changeFilter(filter);
+    },
+
+    render: function() {
+        var self = this;
+
+        //TODO: If there are no comments at all, hide.
+
+        // if (number_of_ungrouped_users == USERS.length) {
+        //     groupNodes = '';
+        // } else if (number_of_ungrouped_users == 0 && GROUPS.length < 2) {
+        //     groupNodes = '';
+        // }
+
+        var number_of_root_comments = COMMENTS.filter(function (c) { return !c.get('parent')}).length;
+
+        var number_of_ungrouped_comments = COMMENTS.length - _.reduce(GROUPS.map(function(group) {
+            return group.get('comments').length;
+        }), function(m, x) {return m + x;}, 0);
+
+        var number_of_ungrouped_users = USERS.length - _.reduce(GROUPS.map(function(group) {
+            return group.get('users').length;
+        }), function(m, x) {return m + x;}, 0);
+
+        var number_of_ungrouped_root_comments = number_of_root_comments - _.reduce(GROUPS.map(function(group) {
+            return group.get('root_comments').length;
+        }), function(m, x) {return m + x;}, 0);
+        
+
+        var groupNodes = [<GroupButton title="All Posts" id="0" number_of_users={USERS.length} number_of_comments={COMMENTS.length} number_of_root_comments={number_of_root_comments} changeFilter={this.changeFilter} active={this.props.filter == 0} />].concat(GROUPS.map(function(group) {
+            return <GroupButton title={"Group " + group.get('number')} active={self.props.filter == group.get('number')} number_of_users={group.get('users').length} number_of_comments={group.get('comments').length} number_of_root_comments={group.get('root_comments').length} id={group.get('number')} representative_comment={group.get('representative_comment')} changeFilter={self.changeFilter} />
+        }));
+
+
+        if (number_of_ungrouped_users > 0) {
+            groupNodes = groupNodes.concat([<GroupButton title="Other" id="-1" number_of_users={number_of_ungrouped_users} number_of_comments={number_of_ungrouped_comments} number_of_root_comments={number_of_ungrouped_root_comments} changeFilter={this.changeFilter} active={this.props.filter == -1} />]);
+        }
+
+
+        window.refresh_groups = function() {
+            self.setState({});
+        };
+        return <div>{groupNodes}</div>;
+    }
+})
+
 
 var GroupButton = React.createClass({
     changeFilter: function() {
@@ -123,7 +173,6 @@ var GroupButton = React.createClass({
 })
 
 var DiscussionComponent = React.createClass({
-    mixins: [BackboneMixin],
 
     route: function(filter, sort) {
         var nav = "";
@@ -159,21 +208,11 @@ var DiscussionComponent = React.createClass({
 
         var number_of_root_comments = COMMENTS.filter(function (c) { return !c.get('parent')}).length;
 
-        var number_of_ungrouped_comments = COMMENTS.length - _.reduce(GROUPS.map(function(group) {
-            return group.get('comments').length;
-        }), function(m, x) {return m + x;}, 0);
-
-        var number_of_ungrouped_root_comments = number_of_root_comments - _.reduce(GROUPS.map(function(group) {
-            return group.get('root_comments').length;
-        }), function(m, x) {return m + x;}, 0);
-
         var number_of_ungrouped_users = USERS.length - _.reduce(GROUPS.map(function(group) {
             return group.get('users').length;
         }), function(m, x) {return m + x;}, 0);
-        
-        var groupNodes = [<GroupButton title="All Posts" id="0" number_of_users={USERS.length} number_of_comments={COMMENTS.length} number_of_root_comments={number_of_root_comments} changeFilter={this.changeFilter} active={this.props.filter == 0} />].concat(GROUPS.map(function(group) {
-            return <GroupButton title={"Group " + group.get('number')} active={self.props.filter == group.get('number')} number_of_users={group.get('users').length} number_of_comments={group.get('comments').length} number_of_root_comments={group.get('root_comments').length} id={group.get('number')} representative_comment={group.get('representative_comment')} changeFilter={self.changeFilter} />
-        })).concat([<GroupButton title="Other" id="-1" number_of_users={number_of_ungrouped_users} number_of_comments={number_of_ungrouped_comments} number_of_root_comments={number_of_ungrouped_root_comments} changeFilter={this.changeFilter} active={this.props.filter == -1} />]);
+
+        groupNodes = <GroupButtons filter={this.props.filter} changeFilter={this.changeFilter} />
 
         var comments = sortComments(this.props.collection, this.props.sortBy, this.props.filter, true);
 
@@ -238,6 +277,27 @@ var DiscussionComponent = React.createClass({
             }
         }
 
+        if (this.props.collection.length == 0) {
+            // If there are no posts at all we need to hide some things
+            introductionRow = '';
+            commentNodes = '';
+        } else {
+            introductionRow = (<div className="row" id="introduction-row">
+                <div className="small-11 columns">
+                    <p id="query-statement">Showing {post_types} sorted by {sorted_by}</p>
+
+                    <div className="users">
+                        {userNodes}
+                    </div>
+                </div>
+                <div className="small-1 columns">
+                    <a className={'order-groups order-button' + (this.props.sortBy == 'groups' ? ' active' : '')} onClick={this.sort_groups} title="Order by groups"><img src="/static/img/group.png" /></a>
+                    <a className={'order-votes order-button' + (this.props.sortBy == 'votes' ? ' active' : '')} onClick={this.sort_votes} title="Order by votes"><img src="/static/img/like.png" /></a>
+                    <a className={'order-recent order-button' + (this.props.sortBy == 'recent' ? ' active' : '')} onClick={this.sort_recent} title="Order by most recent"><img src="/static/img/clock.png" /></a>
+                </div>
+            </div>)
+        }
+
         return (
             <div>
                 <div className="row">
@@ -245,22 +305,9 @@ var DiscussionComponent = React.createClass({
                         <div className="row group-links">
                             {groupNodes}
                         </div>
-                        <div className="row" id="introduction-row">
-                            <div className="small-11 columns">
-                                <p id="query-statement">Showing {post_types} sorted by {sorted_by}</p>
-
-                                <div className="users">
-                                    {userNodes}
-                                </div>
-                            </div>
-                            <div className="small-1 columns">
-                                <a className={'order-groups order-button' + (this.props.sortBy == 'groups' ? ' active' : '')} onClick={this.sort_groups} title="Order by groups"><img src="/static/img/group.png" /></a>
-                                <a className={'order-votes order-button' + (this.props.sortBy == 'votes' ? ' active' : '')} onClick={this.sort_votes} title="Order by votes"><img src="/static/img/like.png" /></a>
-                                <a className={'order-recent order-button' + (this.props.sortBy == 'recent' ? ' active' : '')} onClick={this.sort_recent} title="Order by most recent"><img src="/static/img/clock.png" /></a>
-                            </div>
-                        </div>
-                        {commentNodes}
+                        {introductionRow}
                         <ReplyComponent />
+                        {commentNodes}
                     </div>
                 </div>
             </div>
@@ -273,6 +320,38 @@ var CommentComponent = React.createClass({
     viewGroup: function() {
         if (this.props.author.get('group')) {
             this.props.route(GROUPS.get(this.props.author.get('group')).get('number'), "groups");
+        }
+    },
+
+    toggleReply: function() {
+        this.setState({"showReply": !this.state.showReply})
+    },
+
+    getInitialState: function() {
+        return {showReply: false};
+    },
+
+    like: function() {
+        if (CURRENT_USER_ID > 0) {
+            $.post("/comments/" + this.props.comment.get("id") + "/like");
+            var index = this.props.comment.get('liked_by').indexOf(CURRENT_USER_ID);
+            this.props.comment.get('liked_by').splice(index);
+            var index = this.props.comment.get('disliked_by').indexOf(CURRENT_USER_ID);
+            this.props.comment.get('disliked_by').splice(index);
+            this.props.comment.get('liked_by').push(CURRENT_USER_ID);
+            this.setState({});
+        }
+    },
+
+    dislike: function() {
+        if (CURRENT_USER_ID > 0) {
+            $.post("/comments/" + this.props.comment.get("id") + "/dislike");
+            var index = this.props.comment.get('liked_by').indexOf(CURRENT_USER_ID);
+            this.props.comment.get('liked_by').splice(index);
+            var index = this.props.comment.get('disliked_by').indexOf(CURRENT_USER_ID);
+            this.props.comment.get('disliked_by').splice(index);
+            this.props.comment.get('disliked_by').push(CURRENT_USER_ID);
+            this.setState({});
         }
     },
 
@@ -290,43 +369,66 @@ var CommentComponent = React.createClass({
             group_name = 'No Group'
         }
 
-        var group_like_count = this.props.comment.get('group_liked_by').length;
+        var group_like_count = this.props.comment.group_liked_by().length;
         var like_count = this.props.comment.get('liked_by').length;
 
-        var group_dislike_count = this.props.comment.get('group_disliked_by').length;
+        var group_dislike_count = this.props.comment.group_disliked_by().length;
         var dislike_count = this.props.comment.get('disliked_by').length;
+
+        // Do I like this?
+        var current_position = 0;
+        if (this.props.comment.get('liked_by').indexOf(CURRENT_USER_ID) > -1) {
+            current_position = 1;
+        } else if (this.props.comment.get('disliked_by').indexOf(CURRENT_USER_ID) > -1) {
+            current_position = -1;
+        }
+
+        // <div className="small-2 columns person">
+        //     <img src={this.props.author.get('avatar_url')} />
+        // </div>
+
+        var replyContent = '';
+        if (this.state.showReply) {
+            replyContent = <ReplyComponent parent={this.props.comment.get('id')} />;
+        }
+
+
+        var replyToggle = '';
+        if (!DISCUSSION_LOCKED && USER_AUTHENTICATED) {
+            replyToggle = <a onClick={this.toggleReply} className="reply">reply</a>;
+        }
 
         return (
             <div className={"row post group_" + group_number}>
                 <div className="small-12 columns">
                     <div className="row">
-                        <div className="small-2 columns person">
-                            <img src={this.props.author.get('avatar_url')} />
+                        <div className="small-1 columns votes">
+                            <span title={this.props.author.get('group') ? group_like_count + ' likes from ' + group_name + ' of ' + like_count + ' total likes' : like_count + ' likes'}>
+                                <i onClick={this.like} className={current_position == 1 ? "fi-like active" : "fi-like"} />
+                                {this.props.author.get('group') ? group_like_count + '/' : null}{like_count}
+                            </span>
+                            <span title={this.props.author.get('group') ? group_dislike_count + ' dislikes from ' + group_name + ' of ' + dislike_count + ' total dislikes' : dislike_count + ' dislikes'}>
+                                <i onClick={this.dislike} className={current_position == -1 ? "fi-dislike active" : "fi-dislike"} />
+                                {this.props.author.get('group') ? group_dislike_count + '/' : null}{dislike_count}
+                            </span>
                         </div>
-                        <div className="small-10 columns">
+                        <div className="small-11 columns">
                             <div className="author-info">
                                 <strong>{this.props.author.get('username')}</strong>
                                 <div onClick={this.viewGroup} className={"group_name" + (this.props.author.get('group') ? '' : ' no-group')}>{group_name}</div>
+                                <Time time={this.props.comment.get('created_at')} />
                             </div>
                             <div className="content">
                                 <p>{this.props.comment.get('text')}</p>
                             </div>
                             <div className="info">
                                 <Time time={this.props.comment.get('created_at')} />
-
-                                <span title={this.props.author.get('group') ? group_like_count + ' likes from ' + group_name + ' of ' + like_count + ' total likes' : like_count + ' likes'}>
-                                    <i className="fi-like" />
-                                    {this.props.author.get('group') ? group_like_count + '/' : null}{like_count}
-                                </span>
-                                <span title={this.props.author.get('group') ? group_dislike_count + ' dislikes from ' + group_name + ' of ' + dislike_count + ' total dislikes' : dislike_count + ' dislikes'}>
-                                    <i className="fi-dislike" />
-                                    {this.props.author.get('group') ? group_dislike_count + '/' : null}{dislike_count}
-                                </span>
+                                {replyToggle}
                             </div>
                             <div className="replies">
                                 {replyNodes}
                             </div>
-                            <ReplyComponent parent={this.props.comment.get('id')} />
+                            {replyContent}
                         </div>
                     </div>
                 </div>

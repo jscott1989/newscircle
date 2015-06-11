@@ -2,6 +2,21 @@ GROUPS = new DiscussionGroups(STARTING_GROUPS, {mode: "client"});
 USERS = new DiscussionUsers(STARTING_USERS, {mode: "client"});
 COMMENTS = new Discussion(STARTING_COMMENTS, {mode: "client"});
 
+
+function update(){
+    GROUPS.fetch({update: true, success: function() {
+        USERS.fetch({update: true, success: function() {
+            COMMENTS.fetch({update: true, success: function() {
+                refresh_groups();
+            }});
+        }});
+    }})
+}
+
+setInterval(update, 5000);
+
+var CACHED_SORTED_COMMENTS
+
 var Router = Backbone.Router.extend({
     routes : {
         "groups"               : "index_groups",
@@ -22,6 +37,8 @@ var Router = Backbone.Router.extend({
         if (!sortBy) {
             sortBy = "groups";
         }
+
+        // Clear the cached sort
 
         React.render(
             <DiscussionComponent collection={COMMENTS} filter={group} sortBy={sortBy} />,

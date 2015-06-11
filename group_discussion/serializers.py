@@ -13,6 +13,7 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ('id', 'parent', 'text', 'author', 'liked_by',
                   'disliked_by', 'replies', 'created_at')
+                  # 'group_liked_by', 'group_disliked_by')
 
 
 class GroupSerializer(serializers.ModelSerializer):

@@ -27,12 +27,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Calculate groups for all topics."""
         for topic in Topic.objects.all():
-            
-            # TODO: First record the "most central" person to each existing group
-            # and stick the colour to them
+
+
 
             # Remove existing groups
             for group in topic.groups.all():
+                # TODO: Record most central - then later on
+                # we can ensure that this person remains in their group
+                # - this should ensure some consistency of colour
                 group.delete()
 
             users = {}
@@ -74,14 +76,14 @@ class Command(BaseCommand):
                     g.add_node(user)
                     for r, weight in relationships.items():
                         if r:
-                            if weight < 0:
+                            if weight >= 0:
                                 # Ignore negative weights
-                                weight = 0
-                            g.add_edge(user, r, weight=weight)
+                                g.add_edge(user, r, weight=weight)
 
             if g.number_of_nodes() == 0 or g.number_of_edges() == 0:
                 continue
             communities = {}
+            print g.edges()
             partition = community_finder.best_partition(g)
             for user_id, community_id in partition.items():
                 if community_id not in communities:

@@ -148,3 +148,9 @@ REST_FRAMEWORK = {
 SITE_ID = 1
 
 ALLOW_AUTHENTICATION = True
+
+ACCOUNT_EMAIL_REQUIRED = True
+LOGIN_REDIRECT_URL = "/"
+
+# TODO: real email backend
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

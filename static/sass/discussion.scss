@@ -36,6 +36,10 @@ $fi-path: "../../foundation-icon-fonts/";
     margin-bottom: 0.5em !important;
     padding-top: 0.5em;
     padding-bottom: 0.5em;
+
+    
+    // transition: all 500ms ease;
+    box-sizing: border-box;
 }
 
 $group_bg_colours: #FFF, #DDBF37,#BB4F24,#94132A,#A9A96B,#636663,#4D8F37,#B86590,#36598D,#BB654C,#2C2369,#C7862B,#6A1864,#D9DF4A,#501416,#779630,#482417,#AB1D20,#1D2416;
@@ -57,6 +61,12 @@ $num:0;
                     margin-right: 1em;
                 }
             }
+
+            // -webkit-transition: background-color 1000ms linear;
+            // -moz-transition: background-color 1000ms linear;
+            // -o-transition: background-color 1000ms linear;
+            // -ms-transition: background-color 1000ms linear;
+            // transition: background-color 1000ms linear;
         }
 
     }
@@ -125,27 +135,77 @@ $num:0;
     font-size: 1.1em;
 }
 
-.fi-like, .fi-dislike {
-    margin-right: 0.2em;
+.socialaccount_providers {
+    list-style: none;
+
+    li {
+        display: inline-block;
+
+        a {
+            @extend .button;
+
+            &.github {
+                @extend .fi-social-github;
+            }
+
+            &.facebook {
+                @extend .fi-social-facebook;
+            }
+
+            &.twitter {
+                @extend .fi-social-twitter;
+            }
+
+            &.linkedin {
+                @extend .fi-social-linkedin;
+            }
+
+            &.google {
+                @extend .fi-social-google-plus;
+            }
+
+            color: #FFF;
+            text-align: center;
+
+            &::before {
+                padding-right: 5px;
+            }
+        }
+    }
 }
 
-// SIMPLE
-#comments-count {
+
+
+
+.topic-link {
+    border: 1px solid black;
+    border-radius: 2px;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    padding: 1em;
+    list-style: none;
+}
+
+.number {
     font-size: 2em;
+    position: absolute;
+    top: 10px;
+    text-align: center;
 }
 
-.simple-order-button {
-    opacity: 0.5;
-
-    &.order-votes {
-        margin-right: 1em;
+.votes {
+    padding: 0px;
+    font-size: 1.2em;
+    > span {
+        display: block;
     }
 
-    &.active, &:hover {
-        opacity: 1;
-    }
+    .fi-like, .fi-dislike {
+        margin-right: 4px;
+        cursor: pointer;
 
-    img {
-        width: 32px;
+        &.active {
+            color: green;
+        }
     }
 }

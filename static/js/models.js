@@ -18,28 +18,19 @@ var Group = Backbone.Model.extend({
 });
 
 var Comment = Backbone.Model.extend({
-    defaults : {
-        text        : null,
-        parent      : null,
-        author      : null,
-        liked_by    : null,
-        disliked_by : null,
-        replies     : null
-    },
-
-    group_liked_by: Backbone.Computed('liked_by', function() {
+    group_liked_by: function() {
         var group = USERS.get(this.get("author")).get("group");
         return _.filter(this.get('liked_by'), function(id) {
             return USERS.get(id).get("group") == group;
         });
-    }),
+    },
 
-    group_disliked_by: Backbone.Computed('disliked_by', function() {
+    group_disliked_by: function() {
         var group = USERS.get(this.get("author")).get("group");
         return _.filter(this.get('disliked_by'), function(id) {
             return USERS.get(id).get("group") == group;
         })
-    })
+    }
 });
 
 var DiscussionUsers = Backbone.Collection.extend({

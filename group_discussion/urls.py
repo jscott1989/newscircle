@@ -17,8 +17,13 @@ urlpatterns = patterns(
         name='reply'),
     url(r'^discussion/(?P<pk>\d+)', 'group_discussion.views.discussion',
         name='discussion'),
-    url(r'^simple/(?P<pk>\d+)', 'group_discussion.views.simple_discussion',
-        name='simple_discussion'),
+    url(r'^user/(?P<pk>\d+)', 'group_discussion.views.profile',
+        name='profile'),
+
+    url(r'^comments/(?P<pk>\d+)/like', 'group_discussion.views.like',
+        name='like'),
+    url(r'^comments/(?P<pk>\d+)/dislike', 'group_discussion.views.dislike',
+        name='dislike'),
 
     url(r'^admin/', include(admin.site.urls)),
     (r'^accounts/', include('allauth.urls')),
