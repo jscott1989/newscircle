@@ -8,18 +8,19 @@ from forms import TopicForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from datetime import datetime
+from datetime import datetime, timedelta
 from rest_framework.renderers import JSONRenderer
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from django.http import HttpResponse
+from django.utils import timezone
 
 
 def index(request):
     """ List all topics. """
     TOPICS_PER_PAGE = 6
 
-    paginator = Paginator(Topic.objects.all(), TOPICS_PER_PAGE)
+    paginator = Paginator(Topic.objects.all().order_by('pinned').order_by('-last_post'), TOPICS_PER_PAGE)
 
     page = request.GET.get('page')
     try:
@@ -31,12 +32,14 @@ def index(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         topics = paginator.page(paginator.num_pages)
 
+    timeout = timezone.now() - timedelta(minutes=30)
+
     return render(request, "index.html",
                   {"topics": topics,
                    "start_iterator": (topics.number - 1) * TOPICS_PER_PAGE,
                    "paginator": paginator,
                    "total_users": User.objects.all().count(),
-                   "total_active_users": "TODO"})
+                   "total_active_users": User.objects.filter(existing_profile__last_interaction__gt=timeout).count()})
 
 
 def profile(request):
@@ -71,13 +74,15 @@ def discussion(request, pk):
     topic_user = None
     if request.user.is_authenticated():
         topic_user = request.user.topic_user(topic)
+
+    timeout = timezone.now() - timedelta(minutes=30)
     return render(request, "discussion.html",
                   {"topic": topic,
                    "comments": comments,
                    "users": users,
                    "groups": groups,
                    "total_users": User.objects.all().count(),
-                   "total_active_users": "TODO",
+                   "total_active_users": User.objects.filter(existing_profile__last_interaction__gt=timeout).count(),
                    "topic_user": topic_user})
 
 
@@ -97,6 +102,9 @@ def reply(request, pk):
                       author=request.user.topic_user(topic),
                       created_at=datetime.now())
     comment.save()
+
+    topic.last_post = datetime.now()
+    topic.save()
     return redirect("discussion", topic.pk)
 
 
@@ -143,6 +151,9 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
 
     def get_queryset(self):
+        if self.request.user.is_authenticated:
+            self.request.user.profile.last_interaction = timezone.now()
+            self.request.user.profile.save()
         return Comment.objects.filter(
             topic__id=self.request.resolver_match.kwargs['pk'])
 

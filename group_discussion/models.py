@@ -2,7 +2,18 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from utils import pretty_date
 
+# Ensure that every user has an associated profile
+User.profile = property(lambda u: Profile.objects.get_or_create(user=u)[0])
+
+
+class Profile(models.Model):
+
+    """Member Profile."""
+
+    user = models.OneToOneField(User, related_name="existing_profile")
+    last_interaction = models.DateTimeField(auto_now_add=True)
 
 class Topic(models.Model):
 
@@ -11,6 +22,8 @@ class Topic(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     locked = models.BooleanField(default=False)
+    pinned = models.BooleanField(default=False)
+    last_post = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User)
 
@@ -26,7 +39,7 @@ class Topic(models.Model):
     @property
     def created_time_ago(self):
         """TODO:Return the time ago this was created."""
-        return "1 hour ago"
+        return pretty_date(self.created_at)
 
 
 class Group(models.Model):
