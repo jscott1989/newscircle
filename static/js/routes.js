@@ -8,6 +8,7 @@ function update(){
         USERS.fetch({update: true, success: function() {
             COMMENTS.fetch({update: true, success: function() {
                 refresh_groups();
+                check_for_new_posts();
             }});
         }});
     }})

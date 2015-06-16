@@ -203,6 +203,10 @@ var DiscussionComponent = React.createClass({
         this.route(this.props.filter, "recent")
     },
 
+    refresh: function() {
+        this.setState({});
+    },
+
     render : function() {
         var self = this;
 
@@ -285,6 +289,8 @@ var DiscussionComponent = React.createClass({
             introductionRow = (<div className="row" id="introduction-row">
                 <div className="small-11 columns">
                     <p id="query-statement">Showing {post_types} sorted by {sorted_by}</p>
+
+                    <NewPostsComponent refresh={self.refresh} comment_count={COMMENTS.length}/>
 
                     <div className="users">
                         {userNodes}
@@ -436,6 +442,39 @@ var CommentComponent = React.createClass({
         );
     }
 });
+
+var NewPostsComponent = React.createClass({
+
+    getInitialState: function() {
+        return {"new_comments": 0};
+    },
+
+    refreshView: function() {
+        this.props.refresh();
+        this.setState({"new_comments": 0});
+    },
+
+    render: function() {
+        var self = this;
+        console.log("RR");
+        window.check_for_new_posts = function() {
+            var new_state = COMMENTS.length - self.props.comment_count;
+            if (new_state > self.state.new_comments) {
+                self.setState({"new_comments": new_state});
+            }
+        }
+
+        if (self.state.new_comments > 0) {
+            var new_posts_text = self.state.new_comments + " new comments"
+            if (self.state.new_comments == 1) {
+                new_posts_text = "1 new comment";
+            }
+            return <div onClick={self.refreshView} className="new-posts">There has been {new_posts_text} since you started reading. Click to show.</div>
+        } else {
+            return <div></div>
+        }
+    }
+})
 
 
 var ReplyComponent = React.createClass({

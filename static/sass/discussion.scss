@@ -209,3 +209,16 @@ $num:0;
         }
     }
 }
+
+.new-posts {
+    position: fixed;
+    left: 0px;
+    bottom: 0px;
+    width: 100%;
+    height: 2.3em;
+    background: $topbar-bg-color;
+    color: #FFF;
+    z-index: 9999;
+    text-align: center;
+    padding-top: 6px;
+}
