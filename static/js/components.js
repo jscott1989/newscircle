@@ -339,9 +339,13 @@ var CommentComponent = React.createClass({
         if (CURRENT_USER_ID > 0) {
             $.post("/comments/" + this.props.comment.get("id") + "/like");
             var index = this.props.comment.get('liked_by').indexOf(CURRENT_USER_ID);
-            this.props.comment.get('liked_by').splice(index);
-            var index = this.props.comment.get('disliked_by').indexOf(CURRENT_USER_ID);
-            this.props.comment.get('disliked_by').splice(index);
+            if (index > -1) {
+                this.props.comment.get('liked_by').splice(index, 1);
+            }
+            index = this.props.comment.get('disliked_by').indexOf(CURRENT_USER_ID);
+            if (index > -1) {
+                this.props.comment.get('disliked_by').splice(index, 1);
+            }
             this.props.comment.get('liked_by').push(CURRENT_USER_ID);
             this.setState({});
         }
@@ -351,9 +355,13 @@ var CommentComponent = React.createClass({
         if (CURRENT_USER_ID > 0) {
             $.post("/comments/" + this.props.comment.get("id") + "/dislike");
             var index = this.props.comment.get('liked_by').indexOf(CURRENT_USER_ID);
-            this.props.comment.get('liked_by').splice(index);
-            var index = this.props.comment.get('disliked_by').indexOf(CURRENT_USER_ID);
-            this.props.comment.get('disliked_by').splice(index);
+            if (index > -1) {
+                this.props.comment.get('liked_by').splice(index, 1);
+            }
+            index = this.props.comment.get('disliked_by').indexOf(CURRENT_USER_ID);
+            if (index > -1) {
+                this.props.comment.get('disliked_by').splice(index, 1);
+            }
             this.props.comment.get('disliked_by').push(CURRENT_USER_ID);
             this.setState({});
         }
