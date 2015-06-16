@@ -144,7 +144,7 @@ var GroupButton = React.createClass({
             var author = USERS.get(representative_comment.get('author'));
             representative_comment = (<div className="representative_comment row">
                 <div className="small-4 columns person">
-                    <img src={author.get('avatar_url')} />
+                    <img src="https://disqus.com/api/users/avatars/nhslck.jpg" />
                 </div>
                 <div className="small-8 columns representative_text">
                     <div><strong>{author.get('username')}</strong></div>
@@ -248,9 +248,7 @@ var DiscussionComponent = React.createClass({
 
             var total_filtered_users = userNodes.length;
 
-            userNodes = userNodes.map(function(user) {
-                return <div className="user"><img data-tooltip aria-haspopup="true" class="has-tip" title={user.get('username')} src={user.get('avatar_url')} /></div>
-            }).slice(0, 37);
+            userNodes = <div></div>
 
             if (total_filtered_users > userNodes.length) {
                 userNodes = userNodes.concat([<div>and {total_filtered_users - userNodes.length} more users.</div>]);
