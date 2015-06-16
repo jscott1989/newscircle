@@ -2,8 +2,18 @@
 
 from django.db import models
 from django.contrib.auth.models import User
-import hashlib
+from utils import pretty_date
 
+# Ensure that every user has an associated profile
+User.profile = property(lambda u: Profile.objects.get_or_create(user=u)[0])
+
+
+class Profile(models.Model):
+
+    """Member Profile."""
+
+    user = models.OneToOneField(User, related_name="existing_profile")
+    last_interaction = models.DateTimeField(auto_now_add=True)
 
 class Topic(models.Model):
 
@@ -12,6 +22,10 @@ class Topic(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     locked = models.BooleanField(default=False)
+    pinned = models.BooleanField(default=False)
+    last_post = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User)
 
     def __unicode__(self):
         """ Return the title of the topic. """
@@ -21,6 +35,11 @@ class Topic(models.Model):
     def root_comments(self):
         """ Return all root comments. """
         return [c for c in self.comments if not self.parent]
+
+    @property
+    def created_time_ago(self):
+        """TODO:Return the time ago this was created."""
+        return pretty_date(self.created_at)
 
 
 class Group(models.Model):
@@ -69,6 +88,8 @@ class TopicUser(models.Model):
     topic = models.ForeignKey(Topic, related_name="users")
     group = models.ForeignKey(Group, null=True, related_name="users",
                               on_delete=models.SET_NULL)
+    # This represents the number of in-group links per out-group link
+    group_centrality = models.IntegerField(null=True)
 
     @property
     def username(self):
@@ -104,7 +125,10 @@ class Comment(models.Model):
         return "<%s> %s" % (self.author.username, self.text)
 
     def group_like_count(self):
-        group_likes = [u for u in self.liked_by.all() if u.group == self.author.group]
-        group_dislikes = [u for u in self.disliked_by.all() if u.group == self.author.group]
-        return len(group_likes) - len(group_dislikes)
-        return 1
+        return len(self.group_liked_by()) - len(self.group_disliked_by())
+    
+    def group_liked_by(self):
+        return [u.id for u in self.liked_by.all() if u.group == self.author.group]
+
+    def group_disliked_by(self):
+        return [u.id for u in self.disliked_by.all() if u.group == self.author.group]

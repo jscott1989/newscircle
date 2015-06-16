@@ -13,7 +13,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Assign random groups to all users."""
         for topic in Topic.objects.all():
-            number_of_groups = random.randint(0, 20)
+            number_of_groups = random.randint(0, 10)
             for user in topic.users.all():
                 user.group = Group.objects.get_or_create(topic=topic, number=random.randint(0, number_of_groups))[0]
                 user.save()

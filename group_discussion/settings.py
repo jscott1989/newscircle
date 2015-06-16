@@ -148,3 +148,21 @@ REST_FRAMEWORK = {
 SITE_ID = 1
 
 ALLOW_AUTHENTICATION = True
+
+ACCOUNT_EMAIL_REQUIRED = True
+LOGIN_REDIRECT_URL = "/"
+
+# TODO: real email backend
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+
+# Parse database configuration from $DATABASE_URL
+import dj_database_url
+DATABASES['default'] =  dj_database_url.config(default="sqlite:/db.sqlite3")
+
+# Honor the 'X-Forwarded-Proto' header for request.is_secure()
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Allow all host headers
+ALLOWED_HOSTS = ['*']

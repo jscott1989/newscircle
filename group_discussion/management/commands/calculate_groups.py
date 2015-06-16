@@ -27,12 +27,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Calculate groups for all topics."""
         for topic in Topic.objects.all():
-            
-            # TODO: First record the "most central" person to each existing group
-            # and stick the colour to them
+
+
 
             # Remove existing groups
             for group in topic.groups.all():
+                # TODO: Record most central - then later on
+                # we can ensure that this person remains in their group
+                # - this should ensure some consistency of colour
                 group.delete()
 
             users = {}
@@ -54,6 +56,18 @@ class Command(BaseCommand):
                 # Users who like/dislike the opposite thing get decreased relationship
                 for usera, userb in itertools.product(likers, dislikers):
                     change_relationship(users, usera, userb, -1)
+
+            def get_group_centrality(user_id, user_ids):
+                in_likes = 0
+                out_likes = 0
+
+                for u, v in users.get(user_id, {}).items():
+                    if u in user_ids:
+                        in_likes += v
+                    else:
+                        out_likes += v
+
+                return in_likes - out_likes
             
             g = Graph()
 
@@ -62,14 +76,14 @@ class Command(BaseCommand):
                     g.add_node(user)
                     for r, weight in relationships.items():
                         if r:
-                            if weight < 0:
+                            if weight >= 0:
                                 # Ignore negative weights
-                                weight = 0
-                            g.add_edge(user, r, weight=weight)
+                                g.add_edge(user, r, weight=weight)
 
             if g.number_of_nodes() == 0 or g.number_of_edges() == 0:
                 continue
             communities = {}
+            print g.edges()
             partition = community_finder.best_partition(g)
             for user_id, community_id in partition.items():
                 if community_id not in communities:
@@ -81,6 +95,9 @@ class Command(BaseCommand):
             communities = sorted(communities, key=lambda c: len(c),
                                  reverse=True)
 
+            # Limit to 7 groups, everyone else goes into "other"
+            communities = communities[:7]
+
             for community_id, user_ids in enumerate(communities, 1):
                 if len(user_ids) > 1:
                     community = Group(topic=topic, number=community_id)
@@ -88,6 +105,8 @@ class Command(BaseCommand):
                     for user_id in user_ids:
                         t = TopicUser.objects.get(pk=user_id)
                         t.group = community
+                        t.group_centrality = get_group_centrality(user_id,
+                                                                  user_ids)
                         t.save()
 
-            self.stdout.write('Finished calculating %s' % topic)
+            self.stdout.write('Finished calculating')

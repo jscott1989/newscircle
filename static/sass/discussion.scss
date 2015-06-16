@@ -20,14 +20,11 @@ $fi-path: "../../foundation-icon-fonts/";
     .group_name {
         cursor: pointer;
         text-decoration: underline;
-    }
-}
 
-.info {
-    color: gray;
-    > * {
-        display: inline-block;
-        margin-right: 1em;
+        &.no-group {
+            cursor: default;
+            text-decoration: none;
+        }
     }
 }
 
@@ -39,38 +36,58 @@ $fi-path: "../../foundation-icon-fonts/";
     margin-bottom: 0.5em !important;
     padding-top: 0.5em;
     padding-bottom: 0.5em;
+
+    
+    // transition: all 500ms ease;
+    box-sizing: border-box;
 }
 
-$group_bg_colours: #FFF, #000,#DDBF37,#4D1E61,#BB4F24,#86BCCE,#94132A,#A9A96B,#636663,#4D8F37,#B86590,#36598D,#BB654C,#2C2369,#C7862B,#6A1864,#D9DF4A,#501416,#779630,#482417,#AB1D20,#1D2416;
-$group_fg_colours: #000, #FFF,#000,#FFF,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000;
-
+$group_bg_colours: #FFF, #DDBF37,#BB4F24,#94132A,#A9A96B,#636663,#4D8F37,#B86590,#36598D,#BB654C,#2C2369,#C7862B,#6A1864,#D9DF4A,#501416,#779630,#482417,#AB1D20,#1D2416;
+$group_fg_colours: #000, #000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000;
+$group_info_colours: #808080,#808080,#808080,#303030 ,#808080,#808080,#808080,#808080,#808080,#808080,#808080,#808080,#808080,#808080,#808080,#808080,#808080,#808080,#808080;
 
 $num:0;
     @each $color in $group_bg_colours {
         .group_#{$num} {
             $num: $num + 1;
-            background-color: $color;
+            background-color: lighten($color, 30%);
             border-color: nth($group_fg_colours, $num);
             color: nth($group_fg_colours, $num);
+
+            .info {
+                color: nth($group_info_colours, $num);
+                > * {
+                    display: inline-block;
+                    margin-right: 1em;
+                }
+            }
+
+            // -webkit-transition: background-color 1000ms linear;
+            // -moz-transition: background-color 1000ms linear;
+            // -o-transition: background-color 1000ms linear;
+            // -ms-transition: background-color 1000ms linear;
+            // transition: background-color 1000ms linear;
         }
+
     }
 
 
 .group-links {
     .group {
-        width: 100%;
         margin-bottom: 10px;
         border: 2px solid black;
         text-align: center;
         cursor: pointer;
+        height: 9em;
+        overflow: hidden;
 
         &.active {
-            border-color: red;
+            border-color: #ea8888;
         }
 
         .representative_text {
             overflow: hidden;
-            max-height: 100px;
+            max-height: 7em;
             text-align: left;
             font-size: 0.8em;
         }
@@ -118,27 +135,90 @@ $num:0;
     font-size: 1.1em;
 }
 
-.fi-like, .fi-dislike {
-    margin-right: 0.2em;
+.socialaccount_providers {
+    list-style: none;
+
+    li {
+        display: inline-block;
+
+        a {
+            @extend .button;
+
+            &.github {
+                @extend .fi-social-github;
+            }
+
+            &.facebook {
+                @extend .fi-social-facebook;
+            }
+
+            &.twitter {
+                @extend .fi-social-twitter;
+            }
+
+            &.linkedin {
+                @extend .fi-social-linkedin;
+            }
+
+            &.google {
+                @extend .fi-social-google-plus;
+            }
+
+            color: #FFF;
+            text-align: center;
+
+            &::before {
+                padding-right: 5px;
+            }
+        }
+    }
 }
 
-// SIMPLE
-#comments-count {
+
+
+
+.topic-link {
+    border: 1px solid black;
+    border-radius: 2px;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    padding: 1em;
+    list-style: none;
+}
+
+.number {
     font-size: 2em;
+    position: absolute;
+    top: 10px;
+    text-align: center;
 }
 
-.simple-order-button {
-    opacity: 0.5;
-
-    &.order-votes {
-        margin-right: 1em;
+.votes {
+    padding: 0px;
+    font-size: 1.2em;
+    > span {
+        display: block;
     }
 
-    &.active, &:hover {
-        opacity: 1;
-    }
+    .fi-like, .fi-dislike {
+        margin-right: 4px;
+        cursor: pointer;
 
-    img {
-        width: 32px;
+        &.active {
+            color: green;
+        }
     }
+}
+
+.new-posts {
+    position: fixed;
+    left: 0px;
+    bottom: 0px;
+    width: 100%;
+    height: 2.3em;
+    background: $topbar-bg-color;
+    color: #FFF;
+    z-index: 9999;
+    text-align: center;
+    padding-top: 6px;
 }

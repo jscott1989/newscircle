@@ -17,22 +17,41 @@
         <script src="{% static "modernizr/modernizr.js" %}"></script>
     </head>
     <body>
+        <nav class="top-bar" data-topbar role="navigation">
+            <ul class="title-area">
+                <li class="name">
+                    <h1><a href="/">News Discussion</a></h1>
+                </li>
+                <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+            </ul>
+
+            <section class="top-bar-section">
+                <ul class="right">
+                    {% if request.user.is_authenticated %}
+                        <li class="has-dropdown">
+                            <a href="#">{{request.user}}</a>
+                            <ul class="dropdown">
+                                <li><a href="{% url "account_logout" %}">Sign Out</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li><a href="{% url "account_signup" %}">Sign up</a></li>
+                        <li><a href="{% url "account_login" %}">Sign in</a></li>
+                    {% endif %}
+                </ul>
+            </section>
+        </nav>
         <div class="container">
             <div class="row">
-                {% if ALLOW_AUTHENTICATION %}
-                    <div>
-                        {% if request.user.is_authenticated %}
-                            <p>Hello <strong>{{request.user}}</strong> <a href="{% url "account_logout" %}">Log Out</a></p>
-                        {% else %}
-                            <p>Hello <strong>Guest</strong> <a href="{% url "account_login" %}">Log in</a></p>
-                        {% endif %}
-                    </div>
-                {% endif %}
                 {% block content %}
                 {% endblock %}
             </div>
         </div>
 
         {% render_block "js" postprocessor "compressor.contrib.sekizai.compress" %}
+        <script src="{% static "foundation/js/foundation.min.js" %}"></script>
+        <script>
+            $(document).foundation();
+        </script>
     </body>
 </html>

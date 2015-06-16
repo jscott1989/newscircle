@@ -75,7 +75,7 @@ class Command(BaseCommand):
                     new_comment.liked_by.add(get_user(topic, liker.name))
 
                 for disliker in comment.disliked_by:
-                    new_comment.disliked_by.add(get_user(topic, liker.name))
+                    new_comment.disliked_by.add(get_user(topic, disliker.name))
 
 
             # Ensure posts are linked to their parents
