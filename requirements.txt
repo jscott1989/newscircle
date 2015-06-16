@@ -17,3 +17,7 @@ pony==0.6
 psycopg2==2.5.4
 networkx
 hg+https://bitbucket.org/taynaud/python-louvain
+
+
+# Heroku
+django-toolbelt
