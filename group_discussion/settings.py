@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = '&q*s@ylz=!=bei-+p5xh3#+f6z#0cbgobgtc+bno57iv-purgi'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 TEMPLATE_DEBUG = DEBUG
 
@@ -168,4 +168,4 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 ALLOWED_HOSTS = ['*']
 
 COMPRESS_ENABLED = True
-COMPRESS_OFFLINE = not DEBUG
+COMPRESS_OFFLINE = True
