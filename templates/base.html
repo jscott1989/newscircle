@@ -42,6 +42,33 @@
             </section>
         </nav>
         <div class="container">
+            {% if messages %}
+                <div class="row">
+                    <div class="small-12 columns">
+                        <div id="messages">
+                            {% for message in messages %}
+                                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                                    <div data-alert class="alert-box alert">
+                                {% else %}
+                                    {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+                                        <div data-alert class="alert-box info">
+                                    {% else %}
+                                        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                                            <div data-alert class="alert-box success">
+                                        {% else %}
+                                            <div data-alert class="alert-box secondary">
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+
+                                    {{message}}
+                                    <a href="#" class="close">&times;</a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
             <div class="row">
                 {% block content %}
                 {% endblock %}
