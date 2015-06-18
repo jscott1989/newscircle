@@ -165,3 +165,11 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 ALLOWED_HOSTS = ['*']
 
 COMPRESS_ENABLED = False
+COMPRESS_OFFLINE = False
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    "persona": {
+        "AUDIENCE": os.environ.get('PERSONA_AUDIENCE', 'http://localhost:8000')
+    },
+}
