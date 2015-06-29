@@ -2,6 +2,8 @@
 {% load staticfiles %}
 {% load sekizai_tags %}
 
+{% block title %}{{topic.title}}{% endblock %}
+
 {% block content %}
     <h1>{{topic.title}}</h1>
     <p>{{topic.description}}</p>
@@ -93,7 +95,7 @@
         <script type="text/jsx" src="{% static "js/routes.js"%}"></script>
         <script>
             var ROUTER = new Router();
-            Backbone.history.start({pushState: true, root: "/discussion/" + DISCUSSION_ID});
+            Backbone.history.start({pushState: true, hashChange: false, root: "/discussion/" + DISCUSSION_ID});
         </script>
     {% endaddtoblock %}
 {% endblock %}

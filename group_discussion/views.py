@@ -14,6 +14,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.utils import timezone
+from django.db.models import Count, Sum, F
 
 
 def index(request):
@@ -39,12 +40,50 @@ def index(request):
                    "start_iterator": (topics.number - 1) * TOPICS_PER_PAGE,
                    "paginator": paginator,
                    "total_users": User.objects.all().count(),
-                   "total_active_users": User.objects.filter(existing_profile__last_interaction__gt=timeout).count()})
+                   "total_active_users": User.objects.filter(
+                       existing_profile__last_interaction__gt=timeout
+                       ).count()})
 
 
-def profile(request):
+def profile(request, pk):
     """Show a user's post history."""
-    pass
+    user = get_object_or_404(User, pk=pk)
+
+    sort_by = request.GET.get("sort", "recent")
+
+    COMMENTS_PER_PAGE = 10
+
+    comments = Comment.objects.filter(author__user=user)
+
+    if sort_by == 'recent':
+        comments = comments.order_by('-created_at')
+    else:
+        # comments = comments.annotate(num_likes=Count('liked_by'))
+        # comments = comments.annotate(num_dislikes=Count('disliked_by'))
+        # # comments = comments.annotate(votes=Sum(F('num_likes')+F('num_dislikes')))
+        # comments = comments.extra(select={'votes': 'num_likes - num_dislikes'}).extra(order_by=['votes'])
+        # comments = comments.order_by('-num_dislikes')
+
+        # TODO: We can do this in sql somehow - for now we do it the slow way
+        comments = sorted(comments, key=lambda c : 0 - c.like_count())
+
+    paginator = Paginator(comments, COMMENTS_PER_PAGE)
+
+    page = request.GET.get('page')
+    try:
+        comments = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        comments = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        comments = paginator.page(paginator.num_pages)
+
+    return render(request, "profile.html",
+                  {"comments": comments,
+                   "paginator": paginator,
+                   "user": user,
+                   "sort_by": sort_by})
 
 
 @login_required
@@ -151,7 +190,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
 
     def get_queryset(self):
-        if self.request.user.is_authenticated:
+        if self.request.user.is_authenticated():
             self.request.user.profile.last_interaction = timezone.now()
             self.request.user.profile.save()
         return Comment.objects.filter(

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}overview for {{user}}{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="small-8 columns">
+            <div class="row">
+                <div class="small-11 columns">
+                    {% if sort_by == "recent" %}
+                        <p id="query-statement">Showing all posts sorted by most recent</p>
+                    {% else %}
+                        <p id="query-statement">Showing all posts sorted by votes</p>
+                    {% endif %}
+                </div>
+                <div class="small-1 columns">
+                    {% if sort_by == "recent" %}
+                        <a class='order-recent order-button active' title="Order by most recent"><img src="/static/img/clock.png" /></a>
+                        <a href="{% url "profile" user.pk %}?sort=votes" class='order-votes order-button' title="Order by votes"><img src="/static/img/like.png" /></a>
+                    {% else %}
+                        <a href="{% url "profile" user.pk %}?sort=recent" class='order-recent order-button' title="Order by most recent"><img src="/static/img/clock.png" /></a>
+                        <a class='order-votes order-button active' title="Order by votes"><img src="/static/img/like.png" /></a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <ul class="comments">
+                {% for comment in comments %}
+                    <li class="comment-link">
+                        <div class="row">
+                            <div class="small-12 columns">
+                                <a href="{% url "discussion" comment.topic.id %}">{{comment.topic}}</a>
+                                <div class="submitted">submitted <span title="{{comment.topic.created_at}}">{{comment.topic.created_time_ago}}</span> by <a href="{% url "profile" comment.topic.created_by.pk %}">{{comment.topic.created_by}}</a></div>
+
+                                <div class="row post" >
+                                    <div class="small-12 columns">
+                                        <div class="row">
+                                            <div class="small-1 columns votes" >
+                                                <span title="{{comment.liked_by.count}} likes" >
+                                                    <i class="fi-like" ></i><span >{{comment.liked_by.count}}</span>
+                                                </span>
+                                                <span title="{{comment.disliked_by.count}} dislikes" ><i class="fi-dislike" ></i><span >{{comment.disliked_by.count}}</span></span></div>
+                                                <div class="small-11 columns" ><div class="author-info" >
+                                                    <strong >{{comment.author.user}}</strong>
+                                                    <div title="{{comment.created_at}}" >{{comment.created_time_ago}}</div>
+                                                </div>
+                                                <div class="content" >
+                                                    <p >{{comment.text}}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="topic_info">
+                                    <a href="{% url "discussion" comment.topic.id %}#post_{{comment.pk}}">permalink</a>
+                                    <a href="{% url "discussion" comment.topic.id %}" class="comments">full comments ({{comment.topic.comments.count}})</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="pagination-centered">
+                <ul class="pagination">
+                    {% if comments.has_previous %}
+                        <li class="arrow"><a href="?sort={{sort_by}}&page={{ comments.previous_page_number }}">&laquo;</a></li>
+                    {% else %}
+                        <li class="arrow unavailable"><a href="#">&laquo;</a></li>
+                    {% endif %}
+                    <li class="current"><a href="#">Page {{ comments.number }} of {{ comments.paginator.num_pages }}</a></li>
+                    {% if comments.has_next %}
+                        <li class="arrow"><a href="?sort={{sort_by}}&page={{ comments.next_page_number }}">&raquo;</a></li>
+                    {% else %}
+                        <li class="arrow unavailable"><a href="#">&raquo;</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <div class="small-4 columns">
+        <h2>{{user}}</h2>
+        <p>{{user.total_karma}} total karma</p>
+        <p>{{user.group_karma}} group karma</p>
+        </div>
+
+{% endblock %}
+

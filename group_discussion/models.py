@@ -38,7 +38,7 @@ class Topic(models.Model):
 
     @property
     def created_time_ago(self):
-        """TODO:Return the time ago this was created."""
+        """Return the time ago this was created."""
         return pretty_date(self.created_at)
 
 
@@ -101,11 +101,30 @@ class TopicUser(models.Model):
         # TODO: Stop hotlinking - pull these avatars
         return "https://disqus.com/api/users/avatars/%s.jpg" % self.username
 
+    @property
+    def karma(self):
+        return sum([x.liked_by.count() - x.disliked_by.count() for x in self.comments.all()])
+
+    @property
+    def group_karma(self):
+        return sum([len(x.group_liked_by()) - len(x.group_disliked_by()) for x in self.comments.all()])
+
 
 def get_topic_user(user, topic):
     """ Get the TopicUser for a given user and topic. """
     return user.topic_users.get_or_create(topic=topic)[0]
 User.topic_user = get_topic_user
+
+
+def get_total_karma(user):
+    return sum([topicuser.karma for topicuser in user.topic_users.all()])
+
+User.total_karma = property(get_total_karma)
+
+def get_group_karma(user):
+    return sum([topicuser.group_karma for topicuser in user.topic_users.all()])
+
+User.group_karma = property(get_group_karma)
 
 
 class Comment(models.Model):
@@ -124,11 +143,19 @@ class Comment(models.Model):
         """ Return the author and content of the comment. """
         return "<%s> %s" % (self.author.username, self.text)
 
+    def like_count(self):
+        return self.liked_by.count() - self.disliked_by.count()
+
     def group_like_count(self):
         return len(self.group_liked_by()) - len(self.group_disliked_by())
     
     def group_liked_by(self):
-        return [u.id for u in self.liked_by.all() if u.group == self.author.group]
+        return [u.id for u in self.liked_by.all() if u.group and u.group == self.author.group]
 
     def group_disliked_by(self):
-        return [u.id for u in self.disliked_by.all() if u.group == self.author.group]
+        return [u.id for u in self.disliked_by.all() if u.group and u.group == self.author.group]
+
+    @property
+    def created_time_ago(self):
+        """Return the time ago this was created."""
+        return pretty_date(self.created_at)
