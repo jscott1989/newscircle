@@ -3,7 +3,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 from utils import pretty_date
+import re
+from embedly import Embedly
+from settings import EMBEDLY_KEY
 
+embedly_client = Embedly(EMBEDLY_KEY)
 # Ensure that every user has an associated profile
 User.profile = property(lambda u: Profile.objects.get_or_create(user=u)[0])
 
@@ -26,6 +30,20 @@ class Topic(models.Model):
     last_post = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User)
+    embed_html = models.TextField(null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.embed_html:
+            # Calculate embed
+            # First we match for any URLS
+            m = re.findall("(?P<url>https?://[^\s]+)", self.description)
+            for url in m:
+                # Now pull out the html from embedly
+                o = embedly_client.oembed(url)
+                if not o.get("error") and o.get("html"):
+                    self.embed_html = o['html']
+                    break
+        super(Topic, self).save(*args, **kwargs)
 
     def __unicode__(self):
         """ Return the title of the topic. """
@@ -138,6 +156,21 @@ class Comment(models.Model):
     author = models.ForeignKey(TopicUser, related_name="comments")
     liked_by = models.ManyToManyField(TopicUser, related_name="likes")
     disliked_by = models.ManyToManyField(TopicUser, related_name="dislikes")
+    embed_html = models.TextField(null=True)
+
+
+    def save(self, *args, **kwargs):
+        if not self.embed_html:
+            # Calculate embed
+            # First we match for any URLS
+            m = re.findall("(?P<url>https?://[^\s]+)", self.text)
+            for url in m:
+                # Now pull out the html from embedly
+                o = embedly_client.oembed(url)
+                if not o.get("error") and o.get("html"):
+                    self.embed_html = o['html']
+                    break
+        super(Comment, self).save(*args, **kwargs)
 
     def __unicode__(self):
         """ Return the author and content of the comment. """

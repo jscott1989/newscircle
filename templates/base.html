@@ -36,7 +36,7 @@
                             </ul>
                         </li>
                     {% else %}
-                        <li><a href="{% url "account_signup" %}">Sign up</a></li>
+                        <li><a href="{% url "participant_information" %}">Sign up</a></li>
                         <li><a href="{% url "account_login" %}">Sign in</a></li>
                     {% endif %}
                 </ul>
@@ -77,7 +77,10 @@
         </div>
 
         {% render_block "js" postprocessor "compressor.contrib.sekizai.compress" %}
+        <script src="{% static "jquery/dist/jquery.min.js" %}"></script>
         <script src="{% static "foundation/js/foundation.min.js" %}"></script>
+        <script src="{% static "epiceditor/epiceditor/js/epiceditor.min.js" %}"></script>
+        <script src="{% static "js/markdown.js" %}"></script>
         <script>
             $(document).foundation();
         </script>

@@ -1,12 +1,16 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% load sekizai_tags %}
+{% load markdown_deux_tags %}
 
 {% block title %}{{topic.title}}{% endblock %}
 
 {% block content %}
     <h1>{{topic.title}}</h1>
-    <p>{{topic.description}}</p>
+    <p>{{topic.description|markdown}}</p>
+    {% if topic.embed_html %}
+        {{topic.embed_html|safe}}
+    {% endif %}
     <div class="row">
         <div class="small-8 columns">
             <div id="discussion">

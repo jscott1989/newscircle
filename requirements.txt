@@ -6,7 +6,10 @@ django-libsass==0.2 # Plugin for compressor to use SCSS
 djangorestframework==3.1.1 # For passing models to javascript
 django-sekizai==0.8.1 # For adding to parent blocks
 django-periodically==0.3.0 # Periodic tasks
+foundationform==0.2 # Rendering foundation forms automatically
 
+embedly # Allow link embedding
+django-markdown-deux==1.0.5 # For rendering markdown
 
 # Authentication
 django-allauth==0.18.0 # Authentication and social auth

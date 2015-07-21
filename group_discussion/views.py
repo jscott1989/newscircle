@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from models import Topic, Comment, TopicUser, Group
 from rest_framework import viewsets
 from serializers import CommentSerializer, TopicUserSerializer, GroupSerializer
-from forms import TopicForm
+from forms import TopicForm, DemographicsForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -14,7 +14,6 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.utils import timezone
-from django.db.models import Count, Sum, F
 
 
 def index(request):
@@ -43,6 +42,29 @@ def index(request):
                    "total_active_users": User.objects.filter(
                        existing_profile__last_interaction__gt=timeout
                        ).count()})
+
+
+def participant_information(request):
+    """Show participant information. Pre-signup."""
+    return render(request, "participant_information.html")
+
+
+def consent(request):
+    """Show participant consent. Pre-signup."""
+    return render(request, "consent.html")
+
+# @login_required
+def demographics(request):
+    """Input demographic information."""
+    form = DemographicsForm()
+    if request.method == "POST":
+        form = DemographicsForm(request.POST)
+        if form.is_valid():
+            # Create a new participant and record demographics
+            return redirect("index")
+    return render(request, "demographics.html", {
+                  "form": form
+                  })
 
 
 def profile(request, pk):

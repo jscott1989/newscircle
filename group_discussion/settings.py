@@ -43,6 +43,8 @@ INSTALLED_APPS = (
     'compressor',
     'rest_framework',
     'sekizai',
+    'foundationform',
+    'markdown_deux',
 
     'allauth',
     'allauth.account',
@@ -156,7 +158,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Parse database configuration from $DATABASE_URL
 import dj_database_url
-DATABASES['default'] =  dj_database_url.config(default="sqlite:/db.sqlite3")
+# DATABASES['default'] =  dj_database_url.config(default="sqlite:/db.sqlite3")
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -171,5 +173,22 @@ COMPRESS_OFFLINE = False
 SOCIALACCOUNT_PROVIDERS = {
     "persona": {
         "AUDIENCE": os.environ.get('PERSONA_AUDIENCE', 'http://localhost:8000')
+    },
+}
+
+
+EMBEDLY_KEY = "d19f3b97efcb444ca53c335ede44a7ba"
+
+import re
+
+MARKDOWN_DEUX_STYLES = {
+    "default": {
+        "extras": {
+#             "link-patterns": [
+#     (re.compile(r'(^|[\n ])(([\w]+?://[\w\#$%&~.\-;:=,?@\[\]+]*[^ \<]*[^ \<\.])(/[\w\#$%&~/.\-;:=,?@\[\]+]*)?)', re.IGNORECASE | re.DOTALL), r'\2'),
+#     (re.compile(r'(^|[\n ])(((www|ftp)\.[\w\#$%&~.\-;:=,?@\[\]+]*[^ \<]*[^ \<\.])(/[\w\#$%&~/.\-;:=,?@\[\]+]*)?)', re.IGNORECASE | re.DOTALL), r'http://\2')
+# ]
+        },
+        "safe_mode": "escape",
     },
 }

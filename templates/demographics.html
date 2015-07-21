@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% load foundation %}
+
+{% block content %}
+<h2>Demographic Information</h2>
+
+<form method="POST" action="{% url "demographics" %}">
+    {% csrf_token %}
+    {{form|foundation}}
+    <button type="submit">Submit</button>
+</form>
+{% endblock %}
