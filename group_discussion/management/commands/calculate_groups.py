@@ -28,8 +28,6 @@ class Command(BaseCommand):
         """Calculate groups for all topics."""
         for topic in Topic.objects.all():
 
-
-
             # Remove existing groups
             for group in topic.groups.all():
                 # TODO: Record most central - then later on
@@ -83,7 +81,7 @@ class Command(BaseCommand):
             if g.number_of_nodes() == 0 or g.number_of_edges() == 0:
                 continue
             communities = {}
-            print g.edges()
+
             partition = community_finder.best_partition(g)
             for user_id, community_id in partition.items():
                 if community_id not in communities:
@@ -108,5 +106,10 @@ class Command(BaseCommand):
                         t.group_centrality = get_group_centrality(user_id,
                                                                   user_ids)
                         t.save()
+                        t.log("change group", community_id)
+
+            ungrouped_users = TopicUser.objects.filter(group=None, topic=topic)
+            for t in ungrouped_users:
+                t.log("remove group")
 
             self.stdout.write('Finished calculating')

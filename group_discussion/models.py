@@ -6,6 +6,7 @@ from utils import pretty_date
 import re
 from embedly import Embedly
 from settings import EMBEDLY_KEY
+import json
 
 embedly_client = Embedly(EMBEDLY_KEY)
 # Ensure that every user has an associated profile
@@ -18,6 +19,7 @@ class Profile(models.Model):
 
     user = models.OneToOneField(User, related_name="existing_profile")
     last_interaction = models.DateTimeField(auto_now_add=True)
+
 
 class Topic(models.Model):
 
@@ -95,9 +97,6 @@ class Group(models.Model):
         return only_root_comments[0].id
 
 
-    
-
-
 class TopicUser(models.Model):
 
     """ An instance of a user used for a specific topic. """
@@ -108,6 +107,10 @@ class TopicUser(models.Model):
                               on_delete=models.SET_NULL)
     # This represents the number of in-group links per out-group link
     group_centrality = models.IntegerField(null=True)
+
+    def log(self, action, details):
+        log = Log(user=self, action=action, details=json.dumps(details))
+        log.save()
 
     @property
     def username(self):
@@ -138,6 +141,7 @@ def get_total_karma(user):
     return sum([topicuser.karma for topicuser in user.topic_users.all()])
 
 User.total_karma = property(get_total_karma)
+
 
 def get_group_karma(user):
     return sum([topicuser.group_karma for topicuser in user.topic_users.all()])
@@ -192,3 +196,11 @@ class Comment(models.Model):
     def created_time_ago(self):
         """Return the time ago this was created."""
         return pretty_date(self.created_at)
+
+
+class Log(models.Model):
+    """An action performed by a user."""
+    user = models.ForeignKey(TopicUser, related_name="logs")
+    time = models.DateTimeField(auto_now_add=True)
+    action = models.CharField(max_length=255)
+    details = models.TextField()

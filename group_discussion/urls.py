@@ -17,6 +17,8 @@ urlpatterns = patterns(
         name='demographics'),
     url(r'^create_topic$', 'group_discussion.views.create_topic',
         name='create_topic'),
+    url(r'^discussionl/(?P<pk>\d+)/group/(?P<group>.+)/(?P<sort_by>.+)', 'group_discussion.views.view_group',
+        name='view_group'),
     url(r'^discussion/(?P<pk>\d+)/reply$', 'group_discussion.views.reply',
         name='reply'),
     url(r'^discussion/(?P<pk>\d+)', 'group_discussion.views.discussion',

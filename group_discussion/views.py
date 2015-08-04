@@ -32,16 +32,11 @@ def index(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         topics = paginator.page(paginator.num_pages)
 
-    timeout = timezone.now() - timedelta(minutes=30)
-
     return render(request, "index.html",
                   {"topics": topics,
                    "start_iterator": (topics.number - 1) * TOPICS_PER_PAGE,
                    "paginator": paginator,
-                   "total_users": User.objects.all().count(),
-                   "total_active_users": User.objects.filter(
-                       existing_profile__last_interaction__gt=timeout
-                       ).count()})
+                   "total_users": User.objects.all().count()})
 
 
 def participant_information(request):
@@ -131,15 +126,23 @@ def discussion(request, pk):
     if request.user.is_authenticated():
         topic_user = request.user.topic_user(topic)
 
-    timeout = timezone.now() - timedelta(minutes=30)
     return render(request, "discussion.html",
                   {"topic": topic,
                    "comments": comments,
                    "users": users,
                    "groups": groups,
                    "total_users": User.objects.all().count(),
-                   "total_active_users": User.objects.filter(existing_profile__last_interaction__gt=timeout).count(),
                    "topic_user": topic_user})
+
+
+@login_required
+@require_POST
+def view_group(request, pk, group, sort_by):
+    """ The user has clicked on a group. """
+    topic = get_object_or_404(Topic, pk=pk)
+    topicuser = request.user.topic_user(topic)
+    topicuser.log("view group", {"group": group, "sort_by": sort_by})
+    return HttpResponse("")
 
 
 @login_required
@@ -207,9 +210,6 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
 
     def get_queryset(self):
-        if self.request.user.is_authenticated():
-            self.request.user.profile.last_interaction = timezone.now()
-            self.request.user.profile.save()
         return Comment.objects.filter(
             topic__id=self.request.resolver_match.kwargs['pk'])
 
