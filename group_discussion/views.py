@@ -48,11 +48,6 @@ def participant_information(request):
     """Show participant information. Pre-signup."""
     return render(request, "participant_information.html")
 
-
-def consent(request):
-    """Show participant consent. Pre-signup."""
-    return render(request, "consent.html")
-
 # @login_required
 def demographics(request):
     """Input demographic information."""
@@ -118,7 +113,7 @@ def create_topic(request):
             t = form.save(commit=False)
             t.created_by = request.user
             t.save()
-            messages.success(request, "Your topic have been created")
+            messages.success(request, "Your topic has been created")
             return redirect("discussion", t.pk)
     return render(request, "create_topic.html", {"form": form})
 

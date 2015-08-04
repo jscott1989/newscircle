@@ -462,7 +462,6 @@ var NewPostsComponent = React.createClass({
 
     render: function() {
         var self = this;
-        console.log("RR");
         window.check_for_new_posts = function() {
             var new_state = COMMENTS.length - self.props.comment_count;
             if (new_state > self.state.new_comments) {
