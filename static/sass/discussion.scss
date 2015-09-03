@@ -46,30 +46,22 @@ $group_bg_colours: #FFF, #DDBF37,#BB4F24,#94132A,#A9A96B,#636663,#4D8F37,#B86590
 $group_fg_colours: #000, #000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000,#000;
 $group_info_colours: #808080,#808080,#808080,#303030 ,#808080,#808080,#808080,#808080,#808080,#808080,#808080,#808080,#808080,#808080,#808080,#808080,#808080,#808080,#808080;
 
-$num:0;
-    @each $color in $group_bg_colours {
-        .group_#{$num} {
-            background-color: lighten($color, 30%);
-            border-color: nth($group_fg_colours, $num);
-            color: nth($group_fg_colours, $num);
+@each $color in $group_bg_colours {
+    $num: index($colors-list, $current-color);
+    .group_#{$num} {
+        background-color: lighten($color, 30%);
+        border-color: nth($group_fg_colours, $num);
+        color: nth($group_fg_colours, $num);
 
-            .info {
-                color: nth($group_info_colours, $num);
-                > * {
-                    display: inline-block;
-                    margin-right: 1em;
-                }
+        .info {
+            color: nth($group_info_colours, $num);
+            > * {
+                display: inline-block;
+                margin-right: 1em;
             }
-
-            // -webkit-transition: background-color 1000ms linear;
-            // -moz-transition: background-color 1000ms linear;
-            // -o-transition: background-color 1000ms linear;
-            // -ms-transition: background-color 1000ms linear;
-            // transition: background-color 1000ms linear;
         }
-
-        $num: $num + 1;
     }
+}
 
 
 .group-links {
