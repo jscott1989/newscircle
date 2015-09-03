@@ -49,7 +49,6 @@ $group_info_colours: #808080,#808080,#808080,#303030 ,#808080,#808080,#808080,#8
 $num:0;
     @each $color in $group_bg_colours {
         .group_#{$num} {
-            $num: $num + 1;
             background-color: lighten($color, 30%);
             border-color: nth($group_fg_colours, $num);
             color: nth($group_fg_colours, $num);
@@ -69,6 +68,7 @@ $num:0;
             // transition: background-color 1000ms linear;
         }
 
+        $num: $num + 1;
     }
 
 
