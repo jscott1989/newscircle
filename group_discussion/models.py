@@ -19,6 +19,7 @@ class Profile(models.Model):
 
     user = models.OneToOneField(User, related_name="existing_profile")
     last_interaction = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=False)
 
 
 class Topic(models.Model):
@@ -96,6 +97,12 @@ class Group(models.Model):
                                     key=lambda c : c.group_like_count(), reverse=True)
         return only_root_comments[0].id
 
+    @property
+    def most_central_user(self):
+        # TODO: Some calculation to decide most central
+        return sorted(self.users.all(), lambda u : u.group_centrality, reverse=True)[0]
+    
+
 
 class TopicUser(models.Model):
 
@@ -108,7 +115,13 @@ class TopicUser(models.Model):
     # This represents the number of in-group links per out-group link
     group_centrality = models.IntegerField(null=True)
 
-    def log(self, action, details):
+    last_interaction = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=False)
+
+
+    def log(self, action, details=None):
+        if not details:
+            details = {}
         log = Log(user=self, action=action, details=json.dumps(details))
         log.save()
 

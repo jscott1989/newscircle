@@ -1,7 +1,7 @@
 """ Discussion views. """
 
 from django.shortcuts import render, get_object_or_404, redirect
-from models import Topic, Comment, TopicUser, Group
+from models import Topic, Comment, TopicUser, Group, Profile
 from rest_framework import viewsets
 from serializers import CommentSerializer, TopicUserSerializer, GroupSerializer
 from forms import TopicForm, DemographicsForm
@@ -23,6 +23,12 @@ def index(request):
     paginator = Paginator(Topic.objects.all().order_by('pinned').order_by('-last_post'), TOPICS_PER_PAGE)
 
     page = request.GET.get('page')
+
+    if request.user.is_authenticated():
+        p = request.user.profile
+        p.last_interaction = timezone.now()
+        p.save()
+
     try:
         topics = paginator.page(page)
     except PageNotAnInteger:
@@ -36,7 +42,8 @@ def index(request):
                   {"topics": topics,
                    "start_iterator": (topics.number - 1) * TOPICS_PER_PAGE,
                    "paginator": paginator,
-                   "total_users": User.objects.all().count()})
+                   "total_users": User.objects.all().count(),
+                   "active_users": Profile.objects.filter(active=True).count()})
 
 
 def participant_information(request):
@@ -132,7 +139,9 @@ def discussion(request, pk):
                    "users": users,
                    "groups": groups,
                    "total_users": User.objects.all().count(),
-                   "topic_user": topic_user})
+                   "topic_user": topic_user,
+                   "active_users": Profile.objects.filter(active=True).count()}
+                  )
 
 
 @login_required
@@ -220,5 +229,12 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
 
     def get_queryset(self):
+        if self.request.user.is_authenticated():
+            p = self.request.user.profile
+            p.last_interaction = timezone.now()
+            p.save()
+            tu = self.request.user.topic_user(Topic.objects.get(pk=self.request.resolver_match.kwargs['pk']))
+            tu.last_interaction = timezone.now()
+            tu.save()
         return Group.objects.filter(
             topic__id=self.request.resolver_match.kwargs['pk'])
