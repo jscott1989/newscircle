@@ -45,7 +45,6 @@ var Router = Backbone.Router.extend({
             <DiscussionComponent collection={COMMENTS} filter={group} sortBy={sortBy} />,
             document.getElementById("discussion")
         );
-        $("body").scrollTo("#discussion", 0);
         $(document).foundation('reflow');
     }
 });

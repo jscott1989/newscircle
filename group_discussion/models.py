@@ -100,7 +100,10 @@ class Group(models.Model):
     @property
     def most_central_user(self):
         # TODO: Some calculation to decide most central
-        return sorted(self.users.all(), lambda u : u.group_centrality, reverse=True)[0]
+        v = sorted(self.users.all(), key = lambda u : u.group_centrality, reverse=True)
+        if len(v) == 0:
+            return None
+        return v[0]
     
 
 

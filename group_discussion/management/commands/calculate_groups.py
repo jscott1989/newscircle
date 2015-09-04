@@ -26,90 +26,118 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Calculate groups for all topics."""
-        for topic in Topic.objects.all():
+        while True:
+            for topic in Topic.objects.all():
 
-            # Remove existing groups
-            for group in topic.groups.all():
-                # TODO: Record most central - then later on
-                # we can ensure that this person remains in their group
-                # - this should ensure some consistency of colour
-                group.delete()
+                existing_groups = {}
 
-            users = {}
-            for comment in topic.comments.all():
-                # Everyone who liked this plus the author get put into a set
-                likers = set([liker.id for liker in comment.liked_by.all()] + [comment.author.id])
+                # Remove existing groups
+                for i, group in enumerate(topic.groups.all()):
+                    # TODO: Record most central - then later on
+                    # we can ensure that this person remains in their group
+                    # - this should ensure some consistency of colour
 
-                # Dislikers in another set
-                dislikers = set([disliker.id for disliker in comment.disliked_by.all()])
+                    u = group.most_central_user
 
-                # Users who like the same thing get increased relationship
-                for usera, userb in [b for b in itertools.permutations(likers, 2) if b[0] < b[1]]:
-                    change_relationship(users, usera, userb, 1)
+                    if u:
+                        existing_groups[i] = (u, u.group_centrality)
 
-                # Users who dislike the same thing get increased relationship
-                for usera, userb in [b for b in itertools.permutations(dislikers, 2) if b[0] < b[1]]:
-                    change_relationship(users, usera, userb, 1)
+                    group.delete()
 
-                # Users who like/dislike the opposite thing get decreased relationship
-                for usera, userb in itertools.product(likers, dislikers):
-                    change_relationship(users, usera, userb, -1)
+                users = {}
+                for comment in topic.comments.all():
+                    # Everyone who liked this plus the author get put into a set
+                    likers = set([liker.id for liker in comment.liked_by.all()] + [comment.author.id])
 
-            def get_group_centrality(user_id, user_ids):
-                in_likes = 0
-                out_likes = 0
+                    # Dislikers in another set
+                    dislikers = set([disliker.id for disliker in comment.disliked_by.all()])
 
-                for u, v in users.get(user_id, {}).items():
-                    if u in user_ids:
-                        in_likes += v
-                    else:
-                        out_likes += v
+                    # Users who like the same thing get increased relationship
+                    for usera, userb in [b for b in itertools.permutations(likers, 2) if b[0] < b[1]]:
+                        change_relationship(users, usera, userb, 1)
 
-                return in_likes - out_likes
-            
-            g = Graph()
+                    # Users who dislike the same thing get increased relationship
+                    for usera, userb in [b for b in itertools.permutations(dislikers, 2) if b[0] < b[1]]:
+                        change_relationship(users, usera, userb, 1)
 
-            for user, relationships in users.items():
-                if user:
-                    g.add_node(user)
-                    for r, weight in relationships.items():
-                        if r:
-                            if weight >= 0:
-                                # Ignore negative weights
-                                g.add_edge(user, r, weight=weight)
+                    # Users who like/dislike the opposite thing get decreased relationship
+                    for usera, userb in itertools.product(likers, dislikers):
+                        change_relationship(users, usera, userb, -1)
 
-            if g.number_of_nodes() == 0 or g.number_of_edges() == 0:
-                continue
-            communities = {}
+                def get_group_centrality(user_id, user_ids):
+                    in_likes = 0
+                    out_likes = 0
 
-            partition = community_finder.best_partition(g)
-            for user_id, community_id in partition.items():
-                if community_id not in communities:
-                    communities[community_id] = []
-                communities[community_id].append(user_id)
+                    for u, v in users.get(user_id, {}).items():
+                        if u in user_ids:
+                            in_likes += v
+                        else:
+                            out_likes += v
 
-            # Flatten community ID's (remove communities with only 1 member)
-            communities = [c for c in communities.values() if len(c) > 1]
-            communities = sorted(communities, key=lambda c: len(c),
-                                 reverse=True)
+                    return in_likes - out_likes
+                
+                g = Graph()
 
-            # Limit to 7 groups, everyone else goes into "other"
-            communities = communities[:7]
+                for user, relationships in users.items():
+                    if user:
+                        g.add_node(user)
+                        for r, weight in relationships.items():
+                            if r:
+                                if weight > 0:
+                                    # Ignore negative weights
+                                    g.add_edge(user, r, weight=weight)
 
-            for community_id, user_ids in enumerate(communities, 1):
-                if len(user_ids) > 1:
-                    community = Group(topic=topic, number=community_id)
-                    community.save()
-                    for user_id in user_ids:
-                        t = TopicUser.objects.get(pk=user_id)
-                        t.group = community
-                        t.group_centrality = get_group_centrality(user_id,
-                                                                  user_ids)
-                        t.save()
-                        t.log("change group", community_id)
+                if g.number_of_nodes() == 0 or g.number_of_edges() == 0:
+                    continue
+                communities = {}
 
-            ungrouped_users = TopicUser.objects.filter(group=None, topic=topic)
-            for t in ungrouped_users:
-                t.log("remove group")
+                partition = community_finder.best_partition(g)
+                for user_id, community_id in partition.items():
+                    if community_id not in communities:
+                        communities[community_id] = []
+                    communities[community_id].append(user_id)
 
-            self.stdout.write('Finished calculating')
+                # Flatten community ID's (remove communities with only 1 member)
+                communities = [c for c in communities.values() if len(c) > 1]
+
+                # # TODO: Right now we just sort them which gives them group IDs - instead we need to go through each
+                # # of existing-groups, and if that user is in a group, move that group to this position (unless there
+                # # is a user with a stronger tie to another group)
+                # communities = sorted(communities, key=lambda c: len(c),
+                #                      reverse=True)
+
+                ordered_communities = []
+
+                for c in existing_groups:
+                    pass
+                    # Find the group this user is in, that'll be put at this slot
+
+                # Limit to 7 groups, everyone else goes into "other"
+                communities = communities[:7]
+
+                for community_id, user_ids in enumerate(communities, 1):
+                    if len(user_ids) > 1:
+                        community = Group(topic=topic, number=community_id)
+                        community.save()
+                        for user_id in user_ids:
+                            t = TopicUser.objects.get(pk=user_id)
+                            if t.group is None:
+                                old_group_id = 0
+                            else:
+                                old_group_id = t.group.number
+                            new_group_id = community.number
+                            t.group = community
+                            t.group_centrality = get_group_centrality(user_id,
+                                                                      user_ids)
+                            t.save()
+                            t.log("change group", community_id)
+
+                ungrouped_users = TopicUser.objects.filter(group=None, topic=topic)
+                for t in ungrouped_users:
+                    t.log("remove group")
+
+                self.stdout.write('Finished calculating')
+
+            print "Iteration done."
+            import time
+            time.sleep(5)
