@@ -48,7 +48,7 @@ $group_info_colours: #808080,#808080,#808080,#303030 ,#808080,#808080,#808080,#8
 
 @each $color in $group_bg_colours {
     $num: index($group_bg_colours, $color);
-    .group_#{$num} {
+    .group_#{$num - 1} {
         background-color: lighten($color, 30%);
         border-color: nth($group_fg_colours, $num);
         color: nth($group_fg_colours, $num);
