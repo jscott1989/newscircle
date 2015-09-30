@@ -11,9 +11,7 @@ router.register(r'groups', views.GroupViewSet, base_name="group")
 urlpatterns = patterns(
     '',
     url(r'^$', 'group_discussion.views.index', name='index'),
-    url(r'^info$', 'group_discussion.views.participant_information',
-        name='participant_information'),
-    url(r'^study$', 'group_discussion.views.info',
+    url(r'^info$', 'group_discussion.views.info',
         name='info'),
     url(r'^demographics$', 'group_discussion.views.demographics',
         name='demographics'),

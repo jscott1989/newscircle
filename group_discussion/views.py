@@ -49,10 +49,6 @@ def info(request):
     """Show experiment information."""
     return render(request, "info.html")
 
-def participant_information(request):
-    """Show participant information. Pre-signup."""
-    return render(request, "participant_information.html")
-
 # @login_required
 def demographics(request):
     """Input demographic information."""
