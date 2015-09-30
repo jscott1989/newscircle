@@ -146,6 +146,11 @@ class TopicUser(models.Model):
     def group_karma(self):
         return sum([len(x.group_liked_by()) - len(x.group_disliked_by()) for x in self.comments.all()])
 
+    @property
+    def user_pk(self):
+        return self.user.pk
+    
+
 
 def get_topic_user(user, topic):
     """ Get the TopicUser for a given user and topic. """

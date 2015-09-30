@@ -426,7 +426,7 @@ var CommentComponent = React.createClass({
                         </div>
                         <div className="small-11 columns">
                             <div className="author-info">
-                                <strong>{this.props.author.get('username')}</strong>
+                                <strong><a href={"/user/" + this.props.author.get('user_pk')}>{this.props.author.get('username')}</a></strong>
                                 <div onClick={this.viewGroup} className={"group_name" + (this.props.author.get('group') ? '' : ' no-group')}>{group_name}</div>
                                 <Time time={this.props.comment.get('created_at')} />
                             </div>

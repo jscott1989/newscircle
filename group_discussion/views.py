@@ -45,6 +45,9 @@ def index(request):
                    "total_users": User.objects.all().count(),
                    "active_users": Profile.objects.filter(active=True).count()})
 
+def info(request):
+    """Show experiment information."""
+    return render(request, "info.html")
 
 def participant_information(request):
     """Show participant information. Pre-signup."""

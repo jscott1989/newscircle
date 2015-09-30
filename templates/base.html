@@ -7,7 +7,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>{% block title %}Discussion{% endblock %}</title>
+        <title>{% block title %}{% endblock %} - newscircle</title>
 
         {% compress css %}
             <link rel="stylesheet" type="text/x-scss" href="{% static "sass/discussion.scss" %}" />
@@ -20,7 +20,9 @@
         <nav class="top-bar" data-topbar role="navigation">
             <ul class="title-area">
                 <li class="name">
-                    <h1><a href="/">News Discussion</a></h1>
+                    <h1><a href="/">
+                        <img src="{% static "img/logo.png" %}" title="newscircle" class="logo">
+                    </a></h1>
                 </li>
                 <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
             </ul>

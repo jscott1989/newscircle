@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block title %}News Discussion{% endblock %}
+
 {% block content %}
     <div class="row">
         <div class="small-8 columns">
@@ -44,7 +46,7 @@
 
             <p>This is a forum for discussing news topics. This will primarily concern the United Kingdom but may occasionally have topics which are more broad.</p>
 
-            <p>This is part of study #15776 at the University of Southampton. <a href="#">Click here for more information</a>.</p>
+            <p>This is part of study #15776 at the University of Southampton. <a href="{% url "info" %}">Click here for more information</a>.</p>
         </div>
 
 {% endblock %}
