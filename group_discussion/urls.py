@@ -26,6 +26,11 @@ urlpatterns = patterns(
     url(r'^user/(?P<pk>\d+)', 'group_discussion.views.profile',
         name='profile'),
 
+    url(r'^consent', 'group_discussion.views.consent',
+        name='consent'),
+    url(r'^communicate', 'group_discussion.views.communicate',
+        name='communicate'),
+
     url(r'^comments/(?P<pk>\d+)/like', 'group_discussion.views.like',
         name='like'),
     url(r'^comments/(?P<pk>\d+)/dislike', 'group_discussion.views.dislike',

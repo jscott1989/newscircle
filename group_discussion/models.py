@@ -21,6 +21,9 @@ class Profile(models.Model):
     last_interaction = models.DateTimeField(auto_now_add=True)
     active = models.BooleanField(default=False)
 
+    given_consent = models.BooleanField(default=False)
+    can_be_contacted = models.BooleanField(default=False)
+
 
 class Topic(models.Model):
 

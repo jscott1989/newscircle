@@ -119,6 +119,29 @@ def create_topic(request):
     return render(request, "create_topic.html", {"form": form})
 
 
+@login_required
+def consent(request):
+    """Consent to basic rules."""
+    if request.method == "POST":
+        p = request.user.profile
+        p.given_consent = True
+        p.save()
+        return redirect("/communicate?next=" + request.GET.get("next", "/"))
+    return render(request, "consent.html",
+                  {"next": request.GET.get("next", "/")})
+
+
+@login_required
+def communicate(request):
+    """Consent to follow up communication."""
+    if request.method == "POST":
+        p = request.user.profile
+        p.can_be_contacted = True
+        p.save()
+        return redirect(request.GET.get("next", "/"))
+    return render(request, "communicate.html",
+                  {"next": request.GET.get("next", "/")})
+
 def discussion(request, pk):
     """ View an individual discussion. """
     topic = get_object_or_404(Topic, pk=pk)
