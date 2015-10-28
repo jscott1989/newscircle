@@ -28,6 +28,8 @@ TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = []
 
+DEFAULT_FROM_EMAIL = "donotreply@newscircle.co"
+
 
 # Application definition
 
