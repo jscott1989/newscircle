@@ -12,7 +12,7 @@ embedly # Allow link embedding
 django-markdown-deux==1.0.5 # For rendering markdown
 
 # Authentication
-django-allauth
+django-allauth==0.23.0
 
 
 # Old database
