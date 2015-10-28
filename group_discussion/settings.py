@@ -50,10 +50,9 @@ INSTALLED_APPS = (
     'allauth.account',
     'allauth.socialaccount',
 
-    # 'allauth.socialaccount.providers.facebook',
-    # 'allauth.socialaccount.providers.persona',
-    # 'allauth.socialaccount.providers.twitter',
-    # 'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.twitter',
+    'allauth.socialaccount.providers.google',
 
 
     'group_discussion',
@@ -110,10 +109,18 @@ TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
     "django.core.context_processors.request",
 
     # allauth specific context processors
-    "allauth.account.context_processors.account",
-    "allauth.socialaccount.context_processors.socialaccount",
+    # "allauth.account.context_processors.account",
+    # "allauth.socialaccount.context_processors.socialaccount",
 
-    "group_discussion.context_processors.settings"
+    "group_discussion.context_processors.settings",
+)
+
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
 )
 
 TEMPLATE_DIRS = (
@@ -168,14 +175,6 @@ ALLOWED_HOSTS = ['*']
 
 COMPRESS_ENABLED = False
 COMPRESS_OFFLINE = False
-
-
-SOCIALACCOUNT_PROVIDERS = {
-    "persona": {
-        "AUDIENCE": os.environ.get('PERSONA_AUDIENCE', 'http://localhost:8000')
-    },
-}
-
 
 EMBEDLY_KEY = "d19f3b97efcb444ca53c335ede44a7ba"
 
