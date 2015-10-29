@@ -4,6 +4,10 @@ from group_discussion.models import Topic, Group, TopicUser
 from networkx import Graph
 import community as community_finder
 import itertools
+import random
+
+# Ensure that groups are deterministic
+random.seed(1)
 
 # TODO: Don't calculate for locked topics (nothing will have changed)
 
@@ -33,7 +37,7 @@ class Command(BaseCommand):
 
                 # Remove existing groups
                 for i, group in enumerate(topic.groups.all()):
-                    # TODO: Record most central - then later on
+                    # Record most central - then later on
                     # we can ensure that this person remains in their group
                     # - this should ensure some consistency of colour
 
@@ -103,17 +107,47 @@ class Command(BaseCommand):
                 # # TODO: Right now we just sort them which gives them group IDs - instead we need to go through each
                 # # of existing-groups, and if that user is in a group, move that group to this position (unless there
                 # # is a user with a stronger tie to another group)
-                # communities = sorted(communities, key=lambda c: len(c),
-                #                      reverse=True)
-
-                ordered_communities = []
-
-                for c in existing_groups:
-                    pass
-                    # Find the group this user is in, that'll be put at this slot
-
+                communities = sorted(communities, key=lambda c: len(c),
+                                     reverse=True)
                 # Limit to 7 groups, everyone else goes into "other"
                 communities = communities[:7]
+
+                ordered_communities = [None, None, None, None, None, None, None]
+
+                def get_community(user):
+                    # Get the community (from the communities list) that this user is a member of
+                    for i, c in enumerate(communities):
+                        if user in c:
+                            return i
+
+                    return None
+
+                to_be_placed = range(len(communities))
+
+                for community_id, c in existing_groups.items():
+                    if ordered_communities[community_id] is None:
+                        # For now it's first come first serve - in future we could
+                        # order this by most central
+                        continue
+
+                    # Find the group this user is currently in
+                    community = get_community(c[0])
+
+                    if community:
+                        # This user is not in "Other"
+                        ordered_communities[community_id] = communities[community]
+                        to_be_placed.remove(community)
+
+                # Now, any groups which have not been placed in ordered_communities need to be moved over
+                # to fill the gaps
+                for c in to_be_placed:
+
+                    for i in range(len(ordered_communities)):
+                        if ordered_communities[i] is None:
+                            ordered_communities[i] = communities[c]
+                            break
+
+                communities = [n for n in ordered_communities if n]
 
                 for community_id, user_ids in enumerate(communities, 1):
                     if len(user_ids) > 1:
