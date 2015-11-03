@@ -182,9 +182,19 @@ class Comment(models.Model):
     topic = models.ForeignKey(Topic, related_name="comments")
     parent = models.ForeignKey("Comment", null=True, related_name="replies")
     author = models.ForeignKey(TopicUser, related_name="comments")
-    liked_by = models.ManyToManyField(TopicUser, related_name="likes")
-    disliked_by = models.ManyToManyField(TopicUser, related_name="dislikes")
+    liked_by_raw = models.ManyToManyField(TopicUser, related_name="likes",
+                                      through="Like")
+    disliked_by_raw = models.ManyToManyField(TopicUser, related_name="dislikes",
+                                         through="Dislike")
     embed_html = models.TextField(null=True)
+
+    @property
+    def liked_by(self):
+        return self.liked_by_raw.filter(like__active=True)
+
+    @property
+    def disliked_by(self):
+        return self.disliked_by_raw.filter(dislike__active=True)
 
 
     def save(self, *args, **kwargs):
@@ -220,6 +230,22 @@ class Comment(models.Model):
     def created_time_ago(self):
         """Return the time ago this was created."""
         return pretty_date(self.created_at)
+
+
+class Like(models.Model):
+    """A like."""
+    user = models.ForeignKey(TopicUser)
+    comment = models.ForeignKey(Comment)
+    time_voted = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=True)
+
+
+class Dislike(models.Model):
+    """A dislike."""
+    user = models.ForeignKey(TopicUser)
+    comment = models.ForeignKey(Comment)
+    time_voted = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=True)
 
 
 class Log(models.Model):

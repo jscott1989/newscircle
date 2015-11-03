@@ -2,6 +2,7 @@
 
 from django.shortcuts import render, get_object_or_404, redirect
 from models import Topic, Comment, TopicUser, Group, Profile
+from models import Like, Dislike
 from rest_framework import viewsets
 from serializers import CommentSerializer, TopicUserSerializer, GroupSerializer
 from forms import TopicForm, DemographicsForm
@@ -203,10 +204,11 @@ def reply(request, pk):
 def like(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     topic_user = request.user.topic_user(comment.topic)
-    if comment.disliked_by.filter(pk=topic_user.pk).count() > 0:
-        comment.disliked_by.remove(topic_user)
+    for c in Dislike.objects.filter(user=topic_user, comment=comment):
+        c.active = False
+        c.save()
     if comment.liked_by.filter(pk=topic_user.pk).count() < 1:
-        comment.liked_by.add(topic_user)
+        Like(user=topic_user, comment=comment).save()
     comment.save()
     return HttpResponse("")
 
@@ -216,10 +218,11 @@ def like(request, pk):
 def dislike(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     topic_user = request.user.topic_user(comment.topic)
-    if comment.liked_by.filter(pk=topic_user.pk).count() > 0:
-        comment.liked_by.remove(topic_user)
+    for c in Like.objects.filter(user=topic_user, comment=comment):
+        c.active = False
+        c.save()
     if comment.disliked_by.filter(pk=topic_user.pk).count() < 1:
-        comment.disliked_by.add(topic_user)
+        Dislike(user=topic_user, comment=comment).save()
     comment.save()
     return HttpResponse("")
 

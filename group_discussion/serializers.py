@@ -9,6 +9,10 @@ class TopicUserSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+
+    liked_by = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    disliked_by = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
     class Meta:
         model = Comment
         fields = ('id', 'parent', 'text', 'author', 'liked_by',
