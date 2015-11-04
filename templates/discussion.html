@@ -7,6 +7,19 @@
 
 {% block content %}
     <h1>{{topic.title}}</h1>
+    {% if request.user.is_superuser %}
+        {% if topic.pinned %}
+            <form method="POST" action="{% url "unpin_topic" topic.pk %}">
+                {% csrf_token %}
+                <button type="submit">Unpin</button>
+            </form>
+        {% else %}
+            <form method="POST" action="{% url "pin_topic" topic.pk %}">
+                {% csrf_token %}
+                <button type="submit">Pin</button>
+            </form>
+        {% endif %}
+    {% endif %}
     <p>{{topic.description|markdown}}</p>
     {% if topic.embed_html %}
         {{topic.embed_html|safe}}

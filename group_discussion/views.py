@@ -15,13 +15,14 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.utils import timezone
+from django.contrib.admin.views.decorators import staff_member_required
 
 
 def index(request):
     """ List all topics. """
     TOPICS_PER_PAGE = 6
 
-    paginator = Paginator(Topic.objects.all().order_by('pinned').order_by('-last_post'), TOPICS_PER_PAGE)
+    paginator = Paginator(Topic.objects.all().order_by('-pinned', '-last_post'), TOPICS_PER_PAGE)
 
     page = request.GET.get('page')
 
@@ -212,7 +213,6 @@ def like(request, pk):
     comment.save()
     return HttpResponse("")
 
-
 @login_required
 @require_POST
 def dislike(request, pk):
@@ -225,6 +225,26 @@ def dislike(request, pk):
         Dislike(user=topic_user, comment=comment).save()
     comment.save()
     return HttpResponse("")
+
+
+@login_required
+@staff_member_required
+@require_POST
+def pin_topic(request, pk):
+    topic = get_object_or_404(Topic, pk=pk)
+    topic.pinned = True
+    topic.save()
+    return redirect("discussion", topic.pk)
+
+
+@login_required
+@staff_member_required
+@require_POST
+def unpin_topic(request, pk):
+    topic = get_object_or_404(Topic, pk=pk)
+    topic.pinned = False
+    topic.save()
+    return redirect("discussion", topic.pk)
 
 
 class TopicUserViewSet(viewsets.ModelViewSet):
