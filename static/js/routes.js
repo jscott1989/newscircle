@@ -41,6 +41,10 @@ var Router = Backbone.Router.extend({
 
         // Clear the cached sort
 
+        if (USER_AUTHENTICATED) {
+            $.get('/discussion/' + DISCUSSION_ID + '/group/' + group + '/' + sortBy);
+        }
+
         React.render(
             <DiscussionComponent collection={COMMENTS} filter={group} sortBy={sortBy} />,
             document.getElementById("discussion")

@@ -32,10 +32,15 @@ class Command(BaseCommand):
         """Calculate groups for all topics."""
         for topic in Topic.objects.all():
 
-            existing_groups = {}
+            most_central = {} # Track the most central user
+            existing_groups = {} # Map each user to their existing group
 
             # Remove existing groups
             for i, group in enumerate(topic.groups.all()):
+
+                for u in group.users.all():
+                    existing_groups[u.pk] = i
+
                 # Record most central - then later on
                 # we can ensure that this person remains in their group
                 # - this should ensure some consistency of colour
@@ -43,7 +48,7 @@ class Command(BaseCommand):
                 u = group.most_central_user
 
                 if u:
-                    existing_groups[i] = (u, u.group_centrality)
+                    most_central[i] = (u, u.group_centrality)
 
                 group.delete()
 
@@ -90,15 +95,14 @@ class Command(BaseCommand):
                                 # Ignore negative weights
                                 g.add_edge(user, r, weight=weight)
 
-            if g.number_of_nodes() == 0 or g.number_of_edges() == 0:
-                continue
             communities = {}
 
-            partition = community_finder.best_partition(g)
-            for user_id, community_id in partition.items():
-                if community_id not in communities:
-                    communities[community_id] = []
-                communities[community_id].append(user_id)
+            if g.number_of_nodes() > 0 and g.number_of_edges() > 0:
+                partition = community_finder.best_partition(g)
+                for user_id, community_id in partition.items():
+                    if community_id not in communities:
+                        communities[community_id] = []
+                    communities[community_id].append(user_id)
 
             # Flatten community ID's (remove communities with only 1 member)
             communities = [c for c in communities.values() if len(c) > 1]
@@ -123,7 +127,7 @@ class Command(BaseCommand):
 
             to_be_placed = range(len(communities))
 
-            for community_id, c in existing_groups.items():
+            for community_id, c in most_central.items():
                 if ordered_communities[community_id] is None:
                     # For now it's first come first serve - in future we could
                     # order this by most central
@@ -163,10 +167,15 @@ class Command(BaseCommand):
                         t.group_centrality = get_group_centrality(user_id,
                                                                   user_ids)
                         t.save()
-                        t.log("change group", community_id)
+
+                        # We only care to do this if the group isn't the same as before
+                        if not existing_groups.get(user_id) == community_id:
+                            t.log("change group", community_id)
 
             ungrouped_users = TopicUser.objects.filter(group=None, topic=topic)
             for t in ungrouped_users:
-                t.log("remove group")
+                print "UNGROUPED", t.pk, existing_groups.get(t.pk)
+                if t.pk in existing_groups:
+                    t.log("remove group")
 
             self.stdout.write('Finished calculating')

@@ -169,7 +169,6 @@ def discussion(request, pk):
 
 
 @login_required
-@require_POST
 def view_group(request, pk, group, sort_by):
     """ The user has clicked on a group. """
     topic = get_object_or_404(Topic, pk=pk)
