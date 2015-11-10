@@ -1,5 +1,5 @@
 #!/bin/sh
-echo "Installing python dependencies";
+echo "Installing python dependencies.";
 if [ ! -d "ve" ]; then
     virtualenv ve;
 fi
