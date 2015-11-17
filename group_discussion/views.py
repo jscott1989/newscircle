@@ -9,13 +9,16 @@ from forms import TopicForm, DemographicsForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from datetime import datetime, timedelta
+from datetime import datetime
 from rest_framework.renderers import JSONRenderer
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.utils import timezone
 from django.contrib.admin.views.decorators import staff_member_required
+from embedly import Embedly
+from settings import EMBEDLY_KEY
+embedly_client = Embedly(EMBEDLY_KEY)
 
 
 def index(request):
@@ -115,6 +118,13 @@ def create_topic(request):
         if form.is_valid():
             t = form.save(commit=False)
             t.created_by = request.user
+
+            if 'url' in request.POST:
+                t.url = request.POST['url']
+                o = embedly_client.oembed(t.url)
+                if not o.get("error") and o.get("html"):
+                    t.embed_html = o['html']
+
             t.save()
             messages.success(request, "Your topic has been created")
             return redirect("discussion", t.pk)

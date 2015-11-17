@@ -1,14 +1,27 @@
 {% extends "base.html" %}
 
+{% block title %}Create Topic{% endblock %}
+
 {% block content %}
     <h1>Create Topic</h1>
 
+    <ul class="tabs" data-tab style="border: 1px solid black; display: inline-block;">
+        <li class="tab-title active"><a href="#text">Post Text</a></li>
+        <li class="tab-title"><a href="#link">Post Link</a></li>
+    </ul>
     <form method="POST" action="{% url "create_topic" %}">
         {% csrf_token %}
-        {{form}}
-        <button type="submit">Submit</button>
-        <a class="warning button" href="{% url "index" %}">Cancel</a>
+        <div class="tabs-content">
+            <div class="content active" id="text">
+            </div>
+            <div class="content" id="link">
+                <label for="id_title">URL:</label><input id="id_url" maxlength="255" name="url" type="url" placeholder="Enter a URL to share, or click 'Post Text' above to post without a link">
+            </div>
+            <label for="id_title">Title:</label><input id="id_title" maxlength="255" name="title" type="text" placeholder="A snappy title that describes this topic">
+            <label for="id_description">Content:</label><textarea class="edit_markdown" cols="40" id="id_description" name="description" rows="10"></textarea>
+            <button type="submit">Submit</button>
+            <a class="warning button" href="{% url "index" %}">Cancel</a>
+        </div>
     </form>
-
 {% endblock %}
 

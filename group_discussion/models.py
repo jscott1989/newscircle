@@ -4,11 +4,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from utils import pretty_date
 import re
-from embedly import Embedly
-from settings import EMBEDLY_KEY
 import json
+import urlparse
 
-embedly_client = Embedly(EMBEDLY_KEY)
 # Ensure that every user has an associated profile
 User.profile = property(lambda u: Profile.objects.get_or_create(user=u)[0])
 
@@ -36,24 +34,19 @@ class Topic(models.Model):
     last_post = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User)
+    url = models.URLField(null=True)
     embed_html = models.TextField(null=True)
-
-    def save(self, *args, **kwargs):
-        if not self.embed_html:
-            # Calculate embed
-            # First we match for any URLS
-            m = re.findall("(?P<url>https?://[^\s]+)", self.description)
-            for url in m:
-                # Now pull out the html from embedly
-                o = embedly_client.oembed(url)
-                if not o.get("error") and o.get("html"):
-                    self.embed_html = o['html']
-                    break
-        super(Topic, self).save(*args, **kwargs)
 
     def __unicode__(self):
         """ Return the title of the topic. """
         return self.title
+
+    @property
+    def domain(self):
+        if not self.url:
+            return ""
+        return urlparse.urlparse(self.url).netloc
+    
 
     @property
     def root_comments(self):

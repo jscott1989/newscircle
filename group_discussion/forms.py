@@ -12,7 +12,7 @@ class TopicForm(forms.ModelForm):
         model = Topic
         fields = ['title', 'description']
 
-    description = forms.CharField(widget=forms.Textarea(attrs={"class":"edit_markdown"}))
+    description = forms.CharField(widget=forms.Textarea(attrs={"class":"edit_markdown"}), label="Content")
 
 
 class DemographicsForm(forms.Form):
