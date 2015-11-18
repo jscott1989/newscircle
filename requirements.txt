@@ -24,3 +24,6 @@ hg+https://bitbucket.org/taynaud/python-louvain
 
 # Heroku
 django-toolbelt
+
+beautifulsoup4==4.3.2 # For parsing HTML
+requests

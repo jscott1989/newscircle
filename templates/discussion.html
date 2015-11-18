@@ -6,7 +6,11 @@
 {% block title %}{{topic.title}}{% endblock %}
 
 {% block content %}
-    <h1>{{topic.title}}</h1>
+    {% if topic.url %}
+        <h1 style="display: inline-block"><a href="{{topic.url}}">{{topic.title}}</a></h1> ({{topic.domain}})
+    {% else %}
+        <h1>{{topic.title}}</h1>
+    {% endif %}
     {% if request.user.is_superuser %}
         {% if topic.pinned %}
             <form method="POST" action="{% url "unpin_topic" topic.pk %}">

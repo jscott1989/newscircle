@@ -13,6 +13,8 @@ urlpatterns = patterns(
     url(r'^$', 'group_discussion.views.index', name='index'),
     url(r'^info$', 'group_discussion.views.info',
         name='info'),
+    url(r'^lookup$', 'group_discussion.views.lookup_url',
+        name='lookup_url'),
     url(r'^demographics$', 'group_discussion.views.demographics',
         name='demographics'),
     url(r'^create_topic$', 'group_discussion.views.create_topic',

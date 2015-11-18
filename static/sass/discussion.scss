@@ -246,3 +246,13 @@ $group_info_colours: #808080,#808080,#808080,#303030 ,#808080,#808080,#808080,#8
         margin-bottom: 1em;
     }
 }
+
+
+.comment-link {
+    list-style: none;
+    margin-bottom: 1em;
+
+    .submitted {
+        display: inline-block;
+    }
+}

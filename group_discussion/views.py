@@ -18,6 +18,10 @@ from django.utils import timezone
 from django.contrib.admin.views.decorators import staff_member_required
 from embedly import Embedly
 from settings import EMBEDLY_KEY
+from bs4 import BeautifulSoup
+import requests
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 embedly_client = Embedly(EMBEDLY_KEY)
 
 
@@ -176,6 +180,21 @@ def discussion(request, pk):
                    "topic_user": topic_user,
                    "active_users": Profile.objects.filter(active=True).count()}
                   )
+
+
+@login_required
+@require_POST
+@csrf_exempt
+def lookup_url(request):
+    url = request.POST['url']
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text)
+    [s.extract() for s in soup('script')]
+    [s.extract() for s in soup('style')]
+    return JsonResponse({
+        "title": soup.title.renderContents(),
+        "content": soup.body.text[:500]
+    })
 
 
 @login_required

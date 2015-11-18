@@ -15,6 +15,7 @@ window.setup_markdown_editor = function(elem) {
       preview: '/themes/preview/github.css'
     }
   });
+  window.editor = editor;
   return editor.load();
 };
 
