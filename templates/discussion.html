@@ -41,7 +41,10 @@
 
             </div>
         </div>
-        <div class="small-4 columns">
+        <div class="small-4 columns" id="sidebar">
+            <br />
+            <a class="button" href="#" id="reply_link">Reply</a>
+
             <div class="users">{{total_users}} total users</div>
             <div class="users">{{active_users}} current user{{active_users|pluralize}}</div>
             <h2>UK News</h2>
@@ -127,6 +130,13 @@
         <script>
             var ROUTER = new Router();
             Backbone.history.start({pushState: true, hashChange: false, root: "/discussion/" + DISCUSSION_ID});
+
+
+
+            $('#reply_link').click(function() {
+                window.scrollTo(0,document.body.scrollHeight);
+                return false;
+            })
         </script>
     {% endaddtoblock %}
 {% endblock %}

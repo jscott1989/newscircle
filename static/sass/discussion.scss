@@ -256,3 +256,17 @@ $group_info_colours: #808080,#808080,#808080,#303030 ,#808080,#808080,#808080,#8
         display: inline-block;
     }
 }
+
+#sidebar {
+    padding-top: 2em;
+    font-size: 0.8em;
+
+    h2 {
+        font-size: 1em;
+        font-weight: bold;
+    }
+
+    p {
+        font-size: 1em;
+    }
+}
