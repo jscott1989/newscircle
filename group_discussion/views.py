@@ -142,21 +142,22 @@ def consent(request):
         p = request.user.profile
         p.given_consent = True
         p.save()
-        return redirect("/communicate?next=" + request.GET.get("next", "/"))
+        return redirect(request.GET.get("next", "/"))
     return render(request, "consent.html",
                   {"next": request.GET.get("next", "/")})
 
 
 @login_required
+@require_POST
+@csrf_exempt
 def communicate(request):
     """Consent to follow up communication."""
-    if request.method == "POST":
-        p = request.user.profile
+    p = request.user.profile
+    p.has_seen_contacted = True
+    if request.POST['contact'] == 'True':
         p.can_be_contacted = True
-        p.save()
-        return redirect(request.GET.get("next", "/"))
-    return render(request, "communicate.html",
-                  {"next": request.GET.get("next", "/")})
+    p.save()
+    return JsonResponse({})
 
 def discussion(request, pk):
     """ View an individual discussion. """

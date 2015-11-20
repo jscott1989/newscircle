@@ -1,8 +1,16 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 
 {% block title %}News Discussion{% endblock %}
 
 {% block content %}
+    {% if not request.user.profile.has_seen_contacted %}
+        <br />
+        <div data-alert class="alert-box warning">
+            Hi {{request.user}}, would you mind if we contacted you in the future to ask about your experience with newscircle?
+            <a href="#" id="happy-to-contact" style="color: #FFF;font-weight: bold;text-decoration:underline;">I'm happy to be contacted</a> or <a href="#" id="rather-not" style="color: #FFF;font-weight: bold;text-decoration:underline;">I'd rather not</a>.
+        </div>
+    {% endif %}
     <div class="row">
         <div class="small-8 columns">
             <ul class="topics">
@@ -51,8 +59,12 @@
 
             <p>This is a forum for discussing news topics. This will primarily concern the United Kingdom but may occasionally have topics which are more broad.</p>
 
+            <p>The newscircle system aims to promote a wider range of viewpoints than present in other media by analysing contribution positions using voting behaviour.</p>
+
             <p>This is part of study #15776 at the University of Southampton. <a href="{% url "info" %}">Click here for more information</a>.</p>
         </div>
-
+    </div>
+    <script src="{% static "jquery/dist/jquery.min.js" %}"></script>
+    <script src="{% static "js/contact.js" %}"></script>
 {% endblock %}
 

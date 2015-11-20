@@ -21,6 +21,7 @@ class Profile(models.Model):
 
     given_consent = models.BooleanField(default=False)
     can_be_contacted = models.BooleanField(default=False)
+    has_seen_contacted = models.BooleanField(default=False)
 
 
 class Topic(models.Model):
