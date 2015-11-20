@@ -9,7 +9,7 @@
     <div class="row">
         <div class="small-8 columns">
         {% if topic.url %}
-            <h1 style="display: inline-block"><a target="_BLANK" href="{{topic.url}}">{{topic.title}}</a></h1> ({{topic.domain}})
+            <h1 style="display: inline-block"><a target="_BLANK" href="{{topic.url}}">{{topic.title}}</a></h1> {{topic.logo|safe}}
         {% else %}
             <h1>{{topic.title}}</h1>
         {% endif %}
@@ -43,6 +43,7 @@
         </div>
         <div class="small-4 columns" id="sidebar">
             <br />
+            <a class="button" href="#" id="go_back">Back to list</a>
             <a class="button" href="#" id="reply_link">Reply</a>
 
             <div class="users">{{total_users}} total users</div>
@@ -136,7 +137,12 @@
             $('#reply_link').click(function() {
                 window.scrollTo(0,document.body.scrollHeight);
                 return false;
-            })
+            });
+
+            $('#go_back').click(function() {
+                window.history.back();
+                return false;
+            });
         </script>
     {% endaddtoblock %}
 {% endblock %}

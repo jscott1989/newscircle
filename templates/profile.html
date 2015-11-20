@@ -29,6 +29,7 @@
                         <div class="row">
                             <div class="small-12 columns">
                                 <a href="{% url "discussion" comment.topic.id %}">{{comment.topic}}</a>
+
                                 <div class="submitted">submitted <span title="{{comment.topic.created_at}}">{{comment.topic.created_time_ago}}</span> by <a href="{% url "profile" comment.topic.created_by.pk %}">{{comment.topic.created_by}}</a></div>
 
                                 <div class="row post" >
@@ -52,7 +53,7 @@
                                 </div>
 
                                 <div class="topic_info">
-                                    <a href="{% url "discussion" comment.topic.id %}#post_{{comment.pk}}">permalink</a>
+                                    <!-- <a href="{% url "discussion" comment.topic.id %}#post_{{comment.pk}}">permalink</a> -->
                                     <a href="{% url "discussion" comment.topic.id %}" class="comments">full comments ({{comment.topic.comments.count}})</a>
                                 </div>
                             </div>

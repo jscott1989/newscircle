@@ -47,6 +47,25 @@ class Topic(models.Model):
         if not self.url:
             return ""
         return urlparse.urlparse(self.url).netloc
+
+    @property
+    def logo(self):
+        m = {
+            "youtube": "youtube.png",
+            "theguardian": "guardian.png",
+            "dailymail": "dailymail.png",
+            "mirror.co.uk": "dailymirror.png",
+            "express.co.uk": "express.png",
+            "facebook": "facebook.png",
+            "telegraph.co.uk": "telegraph.png",
+            "twitter": "twitter.png"
+        }
+        domain = self.domain
+        for k, v in m.items():
+            if k in domain:
+                return '<img class="source" src="/static/img/sources/' + v + '">'
+        return '(' + domain + ')'
+    
     
 
     @property

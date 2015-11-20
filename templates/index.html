@@ -24,7 +24,7 @@
                                 {% if not topic.url %}
                                     <a href="{% url "discussion" topic.id %}">{{topic}}</a> (Text)
                                 {% else %}
-                                    <a href="{% url "discussion" topic.id %}">{{topic}}</a> ({{topic.domain}})
+                                    <a href="{% url "discussion" topic.id %}">{{topic}}</a> {{topic.logo|safe}}
                                 {% endif %}
                                 {% if topic.pinned %}(Pinned){% endif %}
                                 <div class="submitted">submitted <span title="{{topic.created_at}}">{{topic.created_time_ago}}</span> by <a href="{% url "profile" topic.created_by.pk %}">{{topic.created_by}}</a></div>
