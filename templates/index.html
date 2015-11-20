@@ -4,7 +4,7 @@
 {% block title %}News Discussion{% endblock %}
 
 {% block content %}
-    {% if not request.user.profile.has_seen_contacted %}
+    {% if request.user.is_authenticated and not request.user.profile.has_seen_contacted %}
         <br />
         <div data-alert class="alert-box warning">
             Hi {{request.user}}, would you mind if we contacted you in the future to ask about your experience with newscircle?
