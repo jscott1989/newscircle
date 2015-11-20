@@ -18,9 +18,9 @@
                     <li class="topic-link">
                         <div class="row">
                             <div class="small-1 columns">
-                                <span class="number">{{forloop.counter|add:start_iterator}}</span>
+                                <span class="number">{{forloop.counter|add:start_iterator}}</span>&nbsp;
                             </div>
-                            <div class="small-11 columns">
+                            <div class="small-9 columns">
                                 {% if not topic.url %}
                                     <a href="{% url "discussion" topic.id %}">{{topic}}</a> (Text)
                                 {% else %}
@@ -29,6 +29,9 @@
                                 {% if topic.pinned %}(Pinned){% endif %}
                                 <div class="submitted">submitted <span title="{{topic.created_at}}">{{topic.created_time_ago}}</span> by <a href="{% url "profile" topic.created_by.pk %}">{{topic.created_by}}</a></div>
                                 <a href="{% url "discussion" topic.id %}" class="comments">{{topic.comments.count}} comments</a>
+                            </div>
+                            <div class="small-2 columns">
+                                <img src="{{topic.thumbnail}}">
                             </div>
                         </div>
                     </li>

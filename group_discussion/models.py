@@ -37,10 +37,17 @@ class Topic(models.Model):
     created_by = models.ForeignKey(User)
     url = models.URLField(null=True)
     embed_html = models.TextField(null=True)
+    thumbnail_url = models.URLField(null=True)
 
     def __unicode__(self):
         """ Return the title of the topic. """
         return self.title
+
+    @property
+    def thumbnail(self):
+        if not self.thumbnail_url:
+            return "/static/img/newslogo.png"
+        return self.thumbnail_url
 
     @property
     def domain(self):

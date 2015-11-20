@@ -127,8 +127,21 @@ def create_topic(request):
                 t.url = request.POST['url']
                 if t.url:
                     o = embedly_client.oembed(t.url)
-                    if not o.get("error") and o.get("html"):
-                        t.embed_html = o['html']
+
+                    # If there are no images in the content, then we can try to insert one
+                    # e = embedly_client.extract(t.url)
+                    # images = e.get("images", [])
+                    # if len(images) > 0:
+                    #     print images[0]
+                    #     image = images[0].get("url")
+                    #     t.description = "![](" + image + ")\n" + t.description
+                    #     t.thumbnail_url = image
+                    # else:
+
+                    if not o.get("error"):
+                        t.embed_html = o.get('html')
+                        t.thumbnail_url = o.get('thumbnail_url')
+                        
 
             t.save()
             messages.success(request, "Your topic has been created")
@@ -189,14 +202,18 @@ def discussion(request, pk):
 @csrf_exempt
 def lookup_url(request):
     url = request.POST['url']
-    r = requests.get(url)
-    soup = BeautifulSoup(r.text)
-    [s.extract() for s in soup('script')]
-    [s.extract() for s in soup('style')]
+    o = embedly_client.extract(url)
+    if not o.get("error"):
+        return JsonResponse({
+            "title": o.get("title", ""),
+            "content": o.get("description", ""),
+            "images": o.get("images", [])
+        })
     return JsonResponse({
-        "title": soup.title.renderContents(),
-        "content": soup.body.text[:500]
-    })
+            "title": "",
+            "content": "",
+            "images": []
+        })
 
 
 @login_required
