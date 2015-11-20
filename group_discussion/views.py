@@ -125,9 +125,10 @@ def create_topic(request):
 
             if 'url' in request.POST:
                 t.url = request.POST['url']
-                o = embedly_client.oembed(t.url)
-                if not o.get("error") and o.get("html"):
-                    t.embed_html = o['html']
+                if t.url:
+                    o = embedly_client.oembed(t.url)
+                    if not o.get("error") and o.get("html"):
+                        t.embed_html = o['html']
 
             t.save()
             messages.success(request, "Your topic has been created")
