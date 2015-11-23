@@ -217,18 +217,18 @@ class Comment(models.Model):
         return self.disliked_by_raw.filter(dislike__active=True)
 
 
-    def save(self, *args, **kwargs):
-        if not self.embed_html:
-            # Calculate embed
-            # First we match for any URLS
-            m = re.findall("(?P<url>https?://[^\s]+)", self.text)
-            for url in m:
-                # Now pull out the html from embedly
-                o = embedly_client.oembed(url)
-                if not o.get("error") and o.get("html"):
-                    self.embed_html = o['html']
-                    break
-        super(Comment, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if not self.embed_html:
+    #         # Calculate embed
+    #         # First we match for any URLS
+    #         m = re.findall("(?P<url>https?://[^\s]+)", self.text)
+    #         for url in m:
+    #             # Now pull out the html from embedly
+    #             o = embedly_client.oembed(url)
+    #             if not o.get("error") and o.get("html"):
+    #                 self.embed_html = o['html']
+    #                 break
+    #     super(Comment, self).save(*args, **kwargs)
 
     def __unicode__(self):
         """ Return the author and content of the comment. """
@@ -274,3 +274,12 @@ class Log(models.Model):
     time = models.DateTimeField(auto_now_add=True)
     action = models.CharField(max_length=255)
     details = models.TextField()
+
+
+class Notification(models.Model):
+    """A notification to a user."""
+    user = models.ForeignKey(User, related_name="notifications")
+    created_time = models.DateTimeField(auto_now_add=True)
+    comment = models.ForeignKey(Comment, related_name="notifications")
+    read = models.BooleanField(default=False)
+    read_datetime = models.DateTimeField(null=True)

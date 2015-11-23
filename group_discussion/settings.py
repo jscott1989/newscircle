@@ -57,7 +57,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount.providers.google',
 
 
-    'group_discussion',
+    'group_discussion'
 )
 
 MIDDLEWARE_CLASSES = (
