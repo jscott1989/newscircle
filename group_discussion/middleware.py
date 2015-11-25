@@ -11,10 +11,9 @@ class ConsentMiddleware(object):
 
 class NoWWWRedirectMiddleware(object):
     def process_request(self, request):
-
-    if request.method == 'GET':  # if wanna be a prefect REST citizen, consider HEAD and OPTIONS here as well
-        host = request.get_host()
-        if host.lower().find('www.') == 0:
-            no_www_host = host[4:]
-            url = request.build_absolute_uri().replace(host, no_www_host, 1)
-            return redirect(url)
+        if request.method == 'GET':  # if wanna be a prefect REST citizen, consider HEAD and OPTIONS here as well
+            host = request.get_host()
+            if host.lower().find('www.') == 0:
+                no_www_host = host[4:]
+                url = request.build_absolute_uri().replace(host, no_www_host, 1)
+                return redirect(url)
