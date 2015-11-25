@@ -31,24 +31,10 @@
                 <ul class="right">
                     {% if request.user.is_authenticated %}
                         <li class="has-dropdown">
-                            <a href="#"><i class="fi-clipboard"></i></a>
-
+                            <a href="#" id="notifications-button">
+                            </a>
                             <ul class="dropdown notifications">
-                                {% for notification in request.user.notifications.all %}
-                                    <li>
-                                        <a href="{{notification.main_link}}">
-                                            <div class="row">
-                                                <div class="small-1 columns" style="padding: 0; padding-top: 1em;">
-                                                    {{notification.image|safe}}
-                                                </div>
-                                                <div class="small-11 columns">
-                                                    <div>{{notification.short|safe}}</div>
-                                                </div>
-                                            </div>
-                                            <div class="notification-time">{{notification.created_time}}</div>
-                                        </a>
-                                    </li>
-                                {% endfor %}
+                                <li id="notifications-list"></li>
                             </ul>
                         </li>
 
@@ -99,15 +85,68 @@
                 {% endblock %}
             </div>
         </div>
-
-        {% render_block "js" postprocessor "compressor.contrib.sekizai.compress" %}
         <script src="{% static "jquery/dist/jquery.min.js" %}"></script>
         <script src="{% static "jquery.cookie/jquery.cookie.js" %}"></script>
         <script src="{% static "foundation/js/foundation.min.js" %}"></script>
         <script src="{% static "epiceditor/epiceditor/js/epiceditor.min.js" %}"></script>
         <script src="{% static "js/markdown.js" %}"></script>
+
+        <!-- Libraries -->
+        <script src="{% static "jquery.scrollTo/jquery.scrollTo.min.js"%}"></script>
+        <script src="{% static "moment/moment.js"%}"></script>
+        <script src="{% static "underscore/underscore-min.js"%}"></script>
+        <script src="{% static "react/react.js"%}"></script>
+        <script src="{% static "backbone/backbone.js"%}"></script>
+        <script src="{% static "backbone-computed-properties/dist/backbone-computed.min.js"%}"></script>
+
+        <!-- External code -->
+        <script src="{% static "js/lib/BackboneMixin.js"%}"></script>
+
+        <script>
+            var STARTING_NOTIFICATIONS = {{notifications|safe}};
+        </script>
+
+        {% compress js %}
+            <script type="text/jsx" src="{% static "js/general_components.js"%}"></script>
+            <script type="text/jsx" src="{% static "js/notifications.js"%}"></script>
+        {% endcompress %}
+
+        {% render_block "js" postprocessor "compressor.contrib.sekizai.compress" %}
+
+
         <script>
             $(document).foundation();
+
+            var csrftoken = $.cookie('csrftoken');
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+            function sameOrigin(url) {
+                // test that a given url is a same-origin URL
+                // url could be relative or scheme relative or absolute
+                var host = document.location.host; // host + port
+                var protocol = document.location.protocol;
+                var sr_origin = '//' + host;
+                var origin = protocol + sr_origin;
+                // Allow absolute or scheme relative URLs to same origin
+                return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+                    (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+                    // or any other URL that isn't scheme relative or absolute i.e relative.
+                    !(/^(\/\/|http:|https:).*/.test(url));
+            }
+            $(function() {
+                $.ajaxSetup({
+                    beforeSend: function(xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                            // Send the token to same-origin, relative URLs only.
+                            // Send the token only if the method warrants CSRF protection
+                            // Using the CSRFToken value acquired earlier
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+            });
         </script>
     </body>
 </html>

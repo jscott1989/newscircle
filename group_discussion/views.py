@@ -2,9 +2,10 @@
 
 from django.shortcuts import render, get_object_or_404, redirect
 from models import Topic, Comment, TopicUser, Group, Profile
-from models import Like, Dislike
+from models import Like, Dislike, Notification
 from rest_framework import viewsets
 from serializers import CommentSerializer, TopicUserSerializer, GroupSerializer
+from serializers import NotificationSerializer
 from forms import TopicForm, DemographicsForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -18,8 +19,6 @@ from django.utils import timezone
 from django.contrib.admin.views.decorators import staff_member_required
 from embedly import Embedly
 from settings import EMBEDLY_KEY
-from bs4 import BeautifulSoup
-import requests
 from notifications import notify
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -54,6 +53,16 @@ def index(request):
                    "paginator": paginator,
                    "total_users": User.objects.all().count(),
                    "active_users": Profile.objects.filter(active=True).count()})
+
+
+def notifications_read(request):
+    """Mark notifications as read."""
+    for notification in request.user.notifications.unread():
+        notification.read = True
+        notification.read_time = datetime.now()
+        notification.save()
+    return JsonResponse({})
+
 
 def info(request):
     """Show experiment information."""
@@ -318,6 +327,17 @@ class CommentViewSet(viewsets.ModelViewSet):
             topic__id=self.request.resolver_match.kwargs['pk'])
 
 
+class NotificationViewSet(viewsets.ModelViewSet):
+
+    """API endpoint that allows notifications to be viewed."""
+    serializer_class = NotificationSerializer
+
+    def get_queryset(self):
+        if not self.request.user.is_authenticated():
+            return []
+        return Notification.objects.all().filter(user=self.request.user)
+
+
 class GroupViewSet(viewsets.ModelViewSet):
 
     """API endpoint that allows groups to be viewed or edited."""
@@ -328,7 +348,8 @@ class GroupViewSet(viewsets.ModelViewSet):
             p = self.request.user.profile
             p.last_interaction = timezone.now()
             p.save()
-            tu = self.request.user.topic_user(Topic.objects.get(pk=self.request.resolver_match.kwargs['pk']))
+            tu = self.request.user.topic_user(
+                Topic.objects.get(pk=self.request.resolver_match.kwargs['pk']))
             tu.last_interaction = timezone.now()
             tu.save()
         return Group.objects.filter(

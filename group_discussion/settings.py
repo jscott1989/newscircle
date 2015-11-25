@@ -117,6 +117,7 @@ TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
     # "allauth.socialaccount.context_processors.socialaccount",
 
     "group_discussion.context_processors.settings",
+    "group_discussion.context_processors.notifications",
 )
 
 AUTHENTICATION_BACKENDS = (

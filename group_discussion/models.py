@@ -279,9 +279,9 @@ class Log(models.Model):
 class NotificationManager(models.Manager):
     """Custom Notification manager for unread."""
 
-    # def unread(self):
-    #     """Get unread notifications."""
-    #     return self.ordered().filter(read=False)
+    def unread(self):
+        """Get unread notifications."""
+        return self.all().filter(read=False)
 
     # def mark_all_as_read(self):
     #     """Mark all notifications as read."""
@@ -311,10 +311,7 @@ class Notification(models.Model):
     @property
     def short(self):
         soup = BeautifulSoup(self.html)
-        main_link = ""
         for match in soup.findAll("a"):
-            if main_link == "" or match._class == "main-link":
-                main_link = match['href']
             match.name = "strong"
             match.attrs = {}
         return str(soup)
@@ -322,4 +319,7 @@ class Notification(models.Model):
     @property
     def main_link(self):
         soup = BeautifulSoup(self.html)
-        return soup.find("a", class_="main-link")["href"]
+        f = soup.find("a", class_="main-link")
+        if not f:
+            return "#"
+        return f['href']

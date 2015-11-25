@@ -29,4 +29,4 @@ class GroupSerializer(serializers.ModelSerializer):
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
-        fields = ('id', 'created_time', 'image', 'html', 'read')
+        fields = ('id', 'created_time', 'image', 'html', 'read', 'main_link', 'short')

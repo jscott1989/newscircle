@@ -7,6 +7,7 @@ router = routers.DefaultRouter()
 router.register(r'users', views.TopicUserViewSet, base_name="user")
 router.register(r'comments', views.CommentViewSet, base_name="comment")
 router.register(r'groups', views.GroupViewSet, base_name="group")
+router.register(r'notifications', views.NotificationViewSet, base_name="notifications")
 
 urlpatterns = patterns(
     '',
@@ -41,6 +42,9 @@ urlpatterns = patterns(
         name='like'),
     url(r'^comments/(?P<pk>\d+)/dislike', 'group_discussion.views.dislike',
         name='dislike'),
+
+    url(r'^notifications/read', 'group_discussion.views.notifications_read',
+        name='notifications_read'),
 
     url(r'^admin/', include(admin.site.urls)),
     (r'^accounts/', include('allauth.urls')),
