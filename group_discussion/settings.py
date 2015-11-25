@@ -70,6 +70,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'group_discussion.middleware.ConsentMiddleware',
+    'group_discussion.middleware.NoWWWRedirectMiddleware',
 )
 
 ROOT_URLCONF = 'group_discussion.urls'
