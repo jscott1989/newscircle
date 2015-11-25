@@ -430,8 +430,7 @@ var CommentComponent = React.createClass({
                                 <div onClick={this.viewGroup} className={"group_name" + (this.props.author.get('group') ? '' : ' no-group')}>{group_name}</div>
                                 <Time time={this.props.comment.get('created_at')} />
                             </div>
-                            <div className="content">
-                                <p>{this.props.comment.get('text')}</p>
+                            <div className="content" dangerouslySetInnerHTML={{__html: this.props.comment.get('html')}}>
                             </div>
                             <div className="info">
                                 <Time time={this.props.comment.get('created_at')} />

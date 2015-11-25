@@ -7,6 +7,7 @@ import re
 import json
 import urlparse
 from bs4 import BeautifulSoup
+from markdown_deux import markdown
 
 # Ensure that every user has an associated profile
 User.profile = property(lambda u: Profile.objects.get_or_create(user=u)[0])
@@ -251,6 +252,10 @@ class Comment(models.Model):
     def created_time_ago(self):
         """Return the time ago this was created."""
         return pretty_date(self.created_at)
+
+    @property
+    def html(self):
+        return markdown(self.text)
 
 
 class Like(models.Model):

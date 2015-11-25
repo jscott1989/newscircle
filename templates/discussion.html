@@ -27,8 +27,10 @@
                 {% endif %}
             {% endif %}
             <p>{{topic.description|markdown}}</p>
-            {{topic.embed_html|safe}}
-
+            {% if topic.embed_html %}
+                {{topic.embed_html|safe}}
+            {% endif %}
+            
             <div id="discussion">
 
             </div>
