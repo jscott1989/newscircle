@@ -1,4 +1,4 @@
-from models import Comment, TopicUser, Group
+from models import Comment, TopicUser, Group, Notification
 from rest_framework import serializers
 
 
@@ -24,3 +24,9 @@ class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = ('id', 'topic', 'number', 'users', 'comments', 'root_comments', 'representative_comment')
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ('id', 'created_time', 'image', 'html', 'read')

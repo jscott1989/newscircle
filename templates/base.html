@@ -31,6 +31,28 @@
                 <ul class="right">
                     {% if request.user.is_authenticated %}
                         <li class="has-dropdown">
+                            <a href="#"><i class="fi-clipboard"></i></a>
+
+                            <ul class="dropdown notifications">
+                                {% for notification in request.user.notifications.all %}
+                                    <li>
+                                        <a href="{{notification.main_link}}">
+                                            <div class="row">
+                                                <div class="small-1 columns" style="padding: 0; padding-top: 1em;">
+                                                    {{notification.image|safe}}
+                                                </div>
+                                                <div class="small-11 columns">
+                                                    <div>{{notification.short|safe}}</div>
+                                                </div>
+                                            </div>
+                                            <div class="notification-time">{{notification.created_time}}</div>
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+
+                        <li class="has-dropdown">
                             <a href="#">{{request.user}}</a>
                             <ul class="dropdown">
                                 <li><a href="{% url "profile" request.user.pk %}">View Profile</a></li>

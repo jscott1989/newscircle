@@ -6,6 +6,7 @@ from utils import pretty_date
 import re
 import json
 import urlparse
+from bs4 import BeautifulSoup
 
 # Ensure that every user has an associated profile
 User.profile = property(lambda u: Profile.objects.get_or_create(user=u)[0])
@@ -73,8 +74,6 @@ class Topic(models.Model):
                 return '<img class="source" src="/static/img/sources/' + v + '">'
         return '(' + domain + ')'
     
-    
-
     @property
     def root_comments(self):
         """ Return all root comments. """
@@ -144,6 +143,8 @@ class TopicUser(models.Model):
     last_interaction = models.DateTimeField(auto_now_add=True)
     active = models.BooleanField(default=False)
 
+    def __unicode__(self):
+        return str(self.user)
 
     def log(self, action, details=None):
         if not details:
@@ -275,11 +276,50 @@ class Log(models.Model):
     action = models.CharField(max_length=255)
     details = models.TextField()
 
+class NotificationManager(models.Manager):
+    """Custom Notification manager for unread."""
+
+    # def unread(self):
+    #     """Get unread notifications."""
+    #     return self.ordered().filter(read=False)
+
+    # def mark_all_as_read(self):
+    #     """Mark all notifications as read."""
+    #     for n in self.unread():
+    #         n.read = True
+    #         n.read_datetime = timezone.now()
+    #         n.save()
+
+    def all(self):
+        """Return time-ordered notifications."""
+        return super(NotificationManager, self).order_by("-created_time")
 
 class Notification(models.Model):
     """A notification to a user."""
+
+    objects = NotificationManager()
+
     user = models.ForeignKey(User, related_name="notifications")
     created_time = models.DateTimeField(auto_now_add=True)
-    comment = models.ForeignKey(Comment, related_name="notifications")
+    subject = models.CharField(max_length=255)
+    html = models.TextField()
+    text = models.TextField()
+    image = models.TextField()
     read = models.BooleanField(default=False)
     read_datetime = models.DateTimeField(null=True)
+
+    @property
+    def short(self):
+        soup = BeautifulSoup(self.html)
+        main_link = ""
+        for match in soup.findAll("a"):
+            if main_link == "" or match._class == "main-link":
+                main_link = match['href']
+            match.name = "strong"
+            match.attrs = {}
+        return str(soup)
+
+    @property
+    def main_link(self):
+        soup = BeautifulSoup(self.html)
+        return soup.find("a", class_="main-link")["href"]

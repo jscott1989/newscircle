@@ -1,0 +1,9 @@
+{% load staticfiles %}
+
+<notification_subject>{% block subject %}{% endblock %}</notification_subject>
+
+<notification_html>{% block html %}{% endblock %}</notification_html>
+
+<notification_text>{% block text %}{% endblock %}</notification_text>
+
+<notification_image>{% block image %}<img src="{% static "img/newslogo.png" %}"/>{% endblock %}</notification_image>

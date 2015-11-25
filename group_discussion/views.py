@@ -20,6 +20,7 @@ from embedly import Embedly
 from settings import EMBEDLY_KEY
 from bs4 import BeautifulSoup
 import requests
+from notifications import notify
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 embedly_client = Embedly(EMBEDLY_KEY)
@@ -127,22 +128,9 @@ def create_topic(request):
                 t.url = request.POST['url']
                 if t.url:
                     o = embedly_client.oembed(t.url)
-
-                    # If there are no images in the content, then we can try to insert one
-                    # e = embedly_client.extract(t.url)
-                    # images = e.get("images", [])
-                    # if len(images) > 0:
-                    #     print images[0]
-                    #     image = images[0].get("url")
-                    #     t.description = "![](" + image + ")\n" + t.description
-                    #     t.thumbnail_url = image
-                    # else:
-
                     if not o.get("error"):
                         t.embed_html = o.get('html')
                         t.thumbnail_url = o.get('thumbnail_url')
-                        
-
             t.save()
             messages.success(request, "Your topic has been created")
             return redirect("discussion", t.pk)
@@ -241,6 +229,21 @@ def reply(request, pk):
                       author=request.user.topic_user(topic),
                       created_at=datetime.now())
     comment.save()
+
+    data = {
+        "respond_user": comment.author,
+        "topic": topic,
+        "comment": comment.text
+    }
+
+    # TODO: Don't generate a notification if the respond_user is the user
+
+    notify(request, topic.created_by, "topic_reply", data)
+
+    if parent:
+        users = set([topic.created_by] + [r.author.user for r in parent.replies.all()])
+        for u in users:
+            notify(request, u, "comment_reply", data)
 
     topic.last_post = datetime.now()
     topic.save()
