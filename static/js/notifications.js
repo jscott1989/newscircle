@@ -81,7 +81,7 @@ var NotificationComponent = React.createClass({
                         <div className="row">
                             <div className="small-1 columns" style={{padding: 0, 'padding-top': '1em'}} dangerouslySetInnerHTML={{__html: this.props.notification.get('image')}}></div>
                             <div className="small-11 columns">
-                                <div dangerouslySetInnerHTML={{__html: this.props.notification.get('short')}}></div>
+                                <div style={{"max-width": "400px", overflow: "hidden"}} dangerouslySetInnerHTML={{__html: this.props.notification.get('short')}}></div>
                             </div>
                         </div>
                         <div className="notification-time"><Time time={this.props.notification.get('created_time')} /></div>
