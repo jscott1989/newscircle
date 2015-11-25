@@ -288,3 +288,27 @@ $group_info_colours: #808080,#808080,#808080,#303030 ,#808080,#808080,#808080,#8
     text-align: right;
     font-size: 0.9em;
 }
+
+#recent-notifications {
+    position: fixed;
+    right: 0px;
+    bottom: 50px;
+    width: 33%;
+
+    blockquote {
+        background: #FFF;
+    }
+
+    ul {
+        list-style: none;
+    }
+
+    li {
+        background: #006286;
+        color: #FFF; 
+
+        a {
+            color: #FFF;
+        }
+    }
+}

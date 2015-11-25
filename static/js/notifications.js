@@ -30,7 +30,7 @@ function updatenotifications() {
     NOTIFICATIONS.fetch({update: true});
 }
 
-setInterval(updatenotifications, 15000);
+setInterval(updatenotifications, 5000);
 
 var NotificationList = React.createClass({
    mixins: [BackboneMixin],
@@ -45,6 +45,34 @@ var NotificationList = React.createClass({
        </ul>
    }
 });
+
+var RecentNotifications = React.createClass({
+    componentDidMount: function() {
+        var self = this;
+        this.interval = setInterval(function() {self.setState({});}, 1000);
+    },
+    componentWillUnmount: function() {
+        clearInterval(this.interval);
+    },
+
+    render: function() {
+        var notifications = _.sortBy(this.props.collection.filter(function(notification) {
+            if (notification.get('read')) return false;
+            var m = moment(notification.get('created_time'), "YYYY-MM-DDTHH:mm:ss.S");
+            return m.add(15, 'seconds').isAfter();
+        }), function(notification) {
+            return notification.get('created_time');
+        });
+
+        var notificationNodes = notifications.map(function (notification) {
+            return <NotificationComponent notification={notification} />;
+        });
+
+        return <ul class="notifications">
+            {{notificationNodes}}
+        </ul>
+    }
+})
 
 var NotificationComponent = React.createClass({
    render: function() {
@@ -85,6 +113,11 @@ React.render(
 React.render(
    <NotificationButton collection={NOTIFICATIONS} />,
    document.getElementById("notifications-button")
+);
+
+React.render(
+   <RecentNotifications collection={NOTIFICATIONS} />,
+   document.getElementById("recent-notifications")
 );
 
 

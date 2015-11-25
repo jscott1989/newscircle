@@ -59,7 +59,7 @@ def notifications_read(request):
     """Mark notifications as read."""
     for notification in request.user.notifications.unread():
         notification.read = True
-        notification.read_time = datetime.now()
+        notification.read_time = timezone.now()
         notification.save()
     return JsonResponse({})
 
@@ -236,7 +236,7 @@ def reply(request, pk):
                       topic=topic,
                       parent=parent,
                       author=request.user.topic_user(topic),
-                      created_at=datetime.now())
+                      created_at=timezone.now())
     comment.save()
 
     data = {
@@ -245,16 +245,18 @@ def reply(request, pk):
         "comment": comment.text
     }
 
-    # TODO: Don't generate a notification if the respond_user is the user
-
-    notify(request, topic.created_by, "topic_reply", data)
-
     if parent:
-        users = set([topic.created_by] + [r.author.user for r in parent.replies.all()])
+        users = set([r.author.user for r in parent.replies.all()])
+        users = [u for u in users if not comment.author.user == u]
         for u in users:
             notify(request, u, "comment_reply", data)
+        if not comment.author.user == topic.created_by and\
+                topic.created_by not in users:
+            notify(request, topic.created_by, "topic_reply", data)
+    elif not comment.author.user == topic.created_by:
+        notify(request, topic.created_by, "topic_reply", data)
 
-    topic.last_post = datetime.now()
+    topic.last_post = timezone.now()
     topic.save()
     return redirect("discussion", topic.pk)
 
