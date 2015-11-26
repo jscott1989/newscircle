@@ -10,7 +10,7 @@ class TopicForm(forms.ModelForm):
 
     class Meta:
         model = Topic
-        fields = ['title', 'description']
+        fields = ['title', 'description', 'url']
 
     description = forms.CharField(widget=forms.Textarea(attrs={"class":"edit_markdown"}), label="Content")
 

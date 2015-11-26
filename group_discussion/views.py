@@ -124,6 +124,7 @@ def profile(request, pk):
 
 
 @login_required
+@require_POST
 def create_topic(request):
     """ Create a topic. """
     form = TopicForm()
@@ -133,17 +134,12 @@ def create_topic(request):
             t = form.save(commit=False)
             t.created_by = request.user
 
-            if 'url' in request.POST:
-                t.url = request.POST['url']
-                if t.url:
-                    o = embedly_client.oembed(t.url)
-                    if not o.get("error"):
-                        t.embed_html = o.get('html')
-                        t.thumbnail_url = o.get('thumbnail_url')
+            if request.POST.get("include_image"):
+                t.description = "![](" + request.POST['image'] + ")\n\n" + t.description
+                t.thumbnail_url = request.POST['image']
             t.save()
             messages.success(request, "Your topic has been created")
             return redirect("discussion", t.pk)
-    return render(request, "create_topic.html", {"form": form})
 
 
 @login_required

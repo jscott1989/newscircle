@@ -312,3 +312,21 @@ $group_info_colours: #808080,#808080,#808080,#303030 ,#808080,#808080,#808080,#8
         }
     }
 }
+
+
+
+#submit-topic {
+    display: none;
+
+    textarea {
+        height: 200px;
+    }
+
+    #topic-image {
+        text-align: center;
+
+        img {
+            max-height: 200px;
+        }
+    }
+}

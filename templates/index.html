@@ -11,6 +11,57 @@
             <a href="#" id="happy-to-contact" style="color: #FFF;font-weight: bold;text-decoration:underline;">I'm happy to be contacted</a> or <a href="#" id="rather-not" style="color: #FFF;font-weight: bold;text-decoration:underline;">I'd rather not</a>.
         </div>
     {% endif %}
+<br />
+    {% if request.user.is_authenticated %}
+        <div data-alert class="alert-box info" id="submit-topic-step-1">
+            <form>
+                <strong>Submit a topic</strong>
+                <div class="row">
+                    <div class="small-10 columns">
+                        <input type="text" placeholder="Enter the URL of a news story" name="url">
+                    </div>
+                    <div class="small-2 columns">
+                        <button type="submit">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div data-alert class="alert-box info" id="submit-topic">
+            <form method="POST" action="{% url "create_topic" %}">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="small-12 columns">
+                        <input type="hidden" name="url">
+                        <input type="text" name="title">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="small-8 columns">
+                        <textarea placeholder="Topic description" name="description"></textarea>
+                    </div>
+                    <div class="small-4 columns" id="topic-image">
+                        <img src="http://www.semicomplete.com/images/googledotcom.png">
+                        <div style="text-align: center;">
+                            <input type="hidden" name="image">
+                            <label><input type="checkbox" name="include_image" checked> Include image</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="small-8 columns">
+                        &nbsp;
+                    </div>
+                    <div class="small-2 columns" style="text-align: right; padding-top: 2.8em;">
+                        <a href="#" id="cancel-submit">Cancel</a>
+                    </div>
+                    <div class="small-2 columns">
+                        <button type="submit">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    {% endif %}
     <div class="row">
         <div class="small-8 columns">
             <ul class="topics">
@@ -55,9 +106,8 @@
         </div>
         <div class="small-4 columns" id="sidebar">
             <br />
-            <a class="button" href="{% url "create_topic" %}">New Topic</a>
-            <div class="users">{{total_users}} total user{{total_users|pluralize}}</div>
-            <div class="users">{{active_users}} current user{{active_users|pluralize}}</div>
+            <!-- <div class="users">{{total_users}} total user{{total_users|pluralize}}</div>
+            <div class="users">{{active_users}} current user{{active_users|pluralize}}</div> -->
             <h2>UK News</h2>
 
             <p>This is a forum for discussing news topics. This will primarily concern the United Kingdom but may occasionally have topics which are more broad.</p>
@@ -69,5 +119,6 @@
     </div>
     <script src="{% static "jquery/dist/jquery.min.js" %}"></script>
     <script src="{% static "js/contact.js" %}"></script>
+    <script src="{% static "js/create_topic.js" %}"></script>
 {% endblock %}
 
