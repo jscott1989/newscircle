@@ -12,7 +12,7 @@
         {% compress css %}
             <link rel="stylesheet" type="text/x-scss" href="{% static "sass/discussion.scss" %}" />
         {% endcompress %}
-        {% render_block "css" postprocessor "compressor.contrib.sekizai.compress" %}
+        <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css" />
 
         <script src="{% static "modernizr/modernizr.js" %}"></script>
     </head>
@@ -116,9 +116,6 @@
             <script type="text/jsx" src="{% static "js/notifications.js"%}"></script>
         {% endcompress %}
 
-        {% render_block "js" postprocessor "compressor.contrib.sekizai.compress" %}
-
-
         <script>
             $(document).foundation();
 
@@ -163,5 +160,8 @@
   ga('send', 'pageview');
 
 </script>
+    {% block additional_scripts %}
+
+    {% endblock %}
     </body>
 </html>

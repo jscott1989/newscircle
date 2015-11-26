@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% load sekizai_tags %}
 {% load markdown_deux_tags %}
+{% load compress %}
 
 {% block title %}{{topic.title}}{% endblock %}
 
@@ -52,35 +53,34 @@
         </div>
     </div>
 
-    {% addtoblock "js" %}
-        <script>
-            var DISCUSSION_ID = {{topic.id}};
-            var DISCUSSION_LOCKED = false;
-            var USER_AUTHENTICATED = false;
-            var CURRENT_USER_ID = 0;
-            {% if topic.locked %}
-                DISCUSSION_LOCKED = true;
-            {% endif %}
-            {% if request.user.is_authenticated %}
-                USER_AUTHENTICATED = true;
-                var CURRENT_USER_ID = {{topic_user.id}};
-            {% endif %}
+    <script>
+        var DISCUSSION_ID = {{topic.id}};
+        var DISCUSSION_LOCKED = false;
+        var USER_AUTHENTICATED = false;
+        var CURRENT_USER_ID = 0;
+        {% if topic.locked %}
+            DISCUSSION_LOCKED = true;
+        {% endif %}
+        {% if request.user.is_authenticated %}
+            USER_AUTHENTICATED = true;
+            var CURRENT_USER_ID = {{topic_user.id}};
+        {% endif %}
 
-        </script>
+        var STARTING_COMMENTS = {{comments|safe}};
+        var STARTING_USERS = {{users|safe}};
+        var STARTING_GROUPS = {{groups|safe}};
+    </script>
+{% endblock %}
+
+{% block additional_scripts %}
+    {% compress js %}
         <!-- Application code -->
-        <script>
-            var STARTING_COMMENTS = {{comments|safe}};
-            var STARTING_USERS = {{users|safe}};
-            var STARTING_GROUPS = {{groups|safe}};
-        </script>
         <script type="text/jsx" src="{% static "js/models.js"%}"></script>
         <script type="text/jsx" src="{% static "js/components.js"%}"></script>
         <script type="text/jsx" src="{% static "js/routes.js"%}"></script>
         <script>
             var ROUTER = new Router();
             Backbone.history.start({pushState: true, hashChange: false, root: "/discussion/" + DISCUSSION_ID});
-
-
 
             $('#reply_link').click(function() {
                 window.scrollTo(0,document.body.scrollHeight);
@@ -92,5 +92,5 @@
                 return false;
             });
         </script>
-    {% endaddtoblock %}
+    {% endcompress %}
 {% endblock %}
