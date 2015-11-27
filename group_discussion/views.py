@@ -128,18 +128,20 @@ def profile(request, pk):
 def create_topic(request):
     """ Create a topic. """
     form = TopicForm()
-    if request.method == "POST":
-        form = TopicForm(request.POST)
-        if form.is_valid():
-            t = form.save(commit=False)
-            t.created_by = request.user
+    form = TopicForm(request.POST)
+    if form.is_valid():
+        t = form.save(commit=False)
+        t.created_by = request.user
 
-            if request.POST.get("include_image"):
-                t.description = "![](" + request.POST['image'] + ")\n\n" + t.description
-                t.thumbnail_url = request.POST['image']
-            t.save()
-            messages.success(request, "Your topic has been created")
-            return redirect("discussion", t.pk)
+        if request.POST.get("include_image"):
+            t.description = "![](" + request.POST['image'] + ")\n\n" + t.description
+            t.thumbnail_url = request.POST['image']
+        t.save()
+        messages.success(request, "Your topic has been created")
+        return redirect("discussion", t.pk)
+    print form.errors
+    messages.error(request, "There was a problem submitting this link.")
+    return redirect("index")
 
 
 @login_required
@@ -216,6 +218,11 @@ def view_group(request, pk, group, sort_by):
     topicuser = request.user.topic_user(topic)
     topicuser.log("view group", {"group": group, "sort_by": sort_by})
     return HttpResponse("")
+
+
+@login_required
+def settings(request):
+    return render("settings.html")
 
 
 @login_required

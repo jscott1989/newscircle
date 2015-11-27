@@ -37,7 +37,7 @@ class Topic(models.Model):
     last_post = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User)
-    url = models.URLField(null=True)
+    url = models.URLField(null=True, max_length=3000)
     embed_html = models.TextField(null=True)
     thumbnail_url = models.URLField(null=True)
 
