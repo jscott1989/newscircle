@@ -1,0 +1,44 @@
+<email_subject>{% if notifications.count == 1 %}{{notifications.0.subject}}{% else %}{{notifications.count}} Newscircle updates{% endif %}</email_subject>
+
+
+<email_text>
+Hi {{user}},
+
+{% if notifications.count == 1 %}
+{{notifications.0.text|safe}}
+{% else %}
+There have been {{notifications.count}} updates at Newscircle since you last checked. Why not come back and get involved?
+
+{% for notification in notifications %}
+
+****
+{{notification.text|safe}}
+****
+
+{% endfor %}
+{% endif %}
+
+
+Newscircle.co
+(If you'd like to change the frequency of these messages, visit http://newscircle.co/settings)
+</email_text>
+
+<email_html>
+Hi {{user}},
+
+{% if notifications.count == 1 %}
+{{notifications.0.html|safe}}
+{% else %}
+    <p>There have been {{notifications.count}} updates at Newscircle since you last checked. Why not come back and get involved?</p>
+
+    {% for notification in notifications %}
+    <div>
+        {{notification.html|safe}}
+    </div>
+    {% endfor %}
+{% endif %}
+
+
+<a href="http://newscircle.co">Newscircle.co</a>
+<p>(If you'd like to change the frequency of these messages, visit <a href="http://newscircle.co/settings">http://newscircle.co/settings</a>)</p>
+</email_html>

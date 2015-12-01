@@ -19,5 +19,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Send notifications."""
         for user in User.objects.all():
-            if user.profile.notifications_setting == EMAIL_IMMEDIATELY:
+            if user.profile.notifications_setting == WEEKLY_SUMMARY:
                 user.email_notifications()

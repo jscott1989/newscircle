@@ -8,6 +8,8 @@ import json
 import urlparse
 from bs4 import BeautifulSoup
 from markdown_deux import markdown
+from django.template.loader import render_to_string
+from django.core.mail import send_mail
 
 # Ensure that every user has an associated profile
 User.profile = property(lambda u: Profile.objects.get_or_create(user=u)[0])
@@ -319,6 +321,7 @@ class Notification(models.Model):
     image = models.TextField()
     read = models.BooleanField(default=False)
     read_datetime = models.DateTimeField(null=True)
+    email_sent = models.BooleanField(default=False)
 
     @property
     def short(self):
@@ -335,3 +338,31 @@ class Notification(models.Model):
         if not f:
             return "#"
         return f['href']
+
+
+def email_notifications(user):
+    unsent_notifications = user.notifications.all().filter(email_sent=False,
+                                                           read=False)
+
+    if unsent_notifications.count() == 0:
+        return
+
+    content = render_to_string(
+        "notifications/email.html",
+        {"notifications": unsent_notifications, "user": user})
+
+    subject = content.split("<email_subject>")[1]\
+        .split("</email_subject>")[0]
+    html = content.split("<email_html>")[1]\
+        .split("</email_html>")[0]
+    text = content.split("<email_text>")[1]\
+        .split("</email_text>")[0]
+
+    send_mail(subject, text, 'noreply@newscircle.co', [user.email],
+              html_message=html, fail_silently=False)
+
+    for n in unsent_notifications:
+        n.email_sent = True
+        n.save()
+
+User.email_notifications = email_notifications
