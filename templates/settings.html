@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Settings{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="small-12 columns">
+            <h1>Settings</h1>
+            <table>
+                <tr>
+                    <th>Username</th>
+                    <td>{{request.user.username}}</td>
+                    <td><a href="{% url "edit_username" %}">Edit</a></td>
+                </tr>
+                <tr>
+                    <th>Email Addresses</th>
+                    <td>{{request.user.emailaddress_set.count}} address{{request.user.emailaddress_set.count|pluralize:",es"}}</td>
+                    <td><a href="{% url "account_email" %}">Edit</a></td>
+                </tr>
+                <tr>
+                    <th>Social Accounts</th>
+                    <td>{{request.user.socialaccount_set.count}} account{{request.user.socialaccount_set.count|pluralize:",s"}}</td>
+                    <td><a href="{% url "socialaccount_connections" %}">Edit</a></td>
+                </tr>
+                <tr>
+                    <th>Password</th>
+                    <td>**********</td>
+                    <td><a href="{% url "account_set_password" %}">Edit</a></td>
+                </tr>
+                <tr>
+                    <th>Notifications</th>
+                    <td>
+                        {% if request.user.profile.notifications_setting == 0 %}
+                            Send Immediately
+                        {% endif %}
+                        {% if request.user.profile.notifications_setting == 1 %}
+                            Daily Summary
+                        {% endif %}
+                        {% if request.user.profile.notifications_setting == 2 %}
+                            Weekly Summary
+                        {% endif %}
+                        {% if request.user.profile.notifications_setting == 3 %}
+                            Disabled
+                        {% endif %}
+                    <td><a href="{% url "notification_settings" %}">Edit</a></td>
+                </tr>
+                <tr>
+                    <th>Contact</th>
+                    <td>
+                        {% if request.user.profile.can_be_contacted %}
+                            I consent to being contacted
+                        {% else %}
+                            I do not consent to being contacted
+                        {% endif %}
+                    </td>
+                    <td><a href="{% url "contact_settings" %}">Edit</a></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

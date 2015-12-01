@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Settings{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="small-12 columns">
+            <h1>Edit username</h1>
+            <form method="POST" action="{% url "edit_username" %}" class="form">
+                {% csrf_token %}
+                {{form}}
+                <button type="submit">Save</button>
+                <a class="button warning" href="{% url "settings" %}">Cancel</a>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

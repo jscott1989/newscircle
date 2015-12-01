@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Settings{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="small-12 columns">
+            <h1>Contact Settings</h1>
+            <form method="POST" action="{% url "contact_settings" %}">
+                {% csrf_token %}
+                <table>
+                    <tr>
+                        <th>Contact</th>
+                        <td>
+                            <select name="can_be_contacted">
+                                <option value="0"{% if not request.user.profile.can_be_contacted %} selected{% endif %}>I do not consent to being contacted about this study</option>
+                                <option value="1"{% if request.user.profile.can_be_contacted %} selected{% endif %}>I consent to being contacted about this study</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

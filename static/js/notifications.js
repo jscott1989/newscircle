@@ -90,6 +90,10 @@ var NotificationComponent = React.createClass({
    }
 });
 
+var notificationInterval = null;
+var usualTitle = "";
+var notificationCount = 0;
+
 var NotificationButton = React.createClass({
     mixins: [BackboneMixin],
     render: function() {
@@ -97,9 +101,27 @@ var NotificationButton = React.createClass({
             return n.get('read') == false;
         }).length;
         if (unread_count > 0) {
+            if (notificationInterval == null) {
+              usualTitle = document.title;
+              notificationCount = unread_count;
+              notificationInterval = setInterval(function() {
+                if (document.title == usualTitle) {
+                  document.title = "(" + notificationCount + " notifications) " + usualTitle;
+                } else {
+                  document.title = usualTitle;
+                }
+              }, 1000);
+            } else if (unread_count != notificationCount) {
+               notificationCount = unread_count;
+            }
             return <div><i className="fi-clipboard"></i>
                     <span className="alert round label">{unread_count}</span></div>
         } else {
+            if (notificationInterval != null) {
+                clearInterval(notificationInterval);
+                document.title = usualTitle;
+                notificationInterval = null;
+            }
             return <div><i className="fi-clipboard"></i></div>
         }
     }

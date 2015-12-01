@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Settings{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="small-12 columns">
+            <h1>Notification Settings</h1>
+            <form method="POST" action="{% url "notification_settings" %}">
+                {% csrf_token %}
+                <table>
+                    <tr>
+                        <th>Notifications</th>
+                        <td>
+                            <select name="notifications">
+                                <option value="0"{% if request.user.profile.notifications_setting == 0 %} selected{% endif %}>Email me immediately</option>
+                                <option value="1"{% if request.user.profile.notifications_setting == 1 %} selected{% endif %}>Email me a daily summary</option>
+                                <option value="2"{% if request.user.profile.notifications_setting == 2 %} selected{% endif %}>Email me a weekly summary</option>
+                                <option value="3"{% if request.user.profile.notifications_setting == 3 %} selected{% endif %}>Don't email me</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

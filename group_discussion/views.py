@@ -22,6 +22,7 @@ from settings import EMBEDLY_KEY
 from notifications import notify
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from forms import UsernameForm
 embedly_client = Embedly(EMBEDLY_KEY)
 
 
@@ -55,6 +56,7 @@ def index(request):
                    "active_users": Profile.objects.filter(active=True).count()})
 
 
+@login_required
 def notifications_read(request):
     """Mark notifications as read."""
     for notification in request.user.notifications.unread():
@@ -222,7 +224,46 @@ def view_group(request, pk, group, sort_by):
 
 @login_required
 def settings(request):
-    return render("settings.html")
+    """Settings."""
+    return render(request, "settings.html")
+
+
+@login_required
+def edit_username(request):
+    """Change username."""
+    form = UsernameForm(initial={"username": request.user.username})
+    if request.method == "POST":
+        form = UsernameForm(request.POST)
+        if form.is_valid():
+            request.user.username = form.cleaned_data['username']
+            request.user.save()
+            return redirect("settings")
+    return render(request, "edit_username.html",
+                  {"form": form})
+
+
+@login_required
+def notification_settings(request):
+    """Change notification settings."""
+    if request.method == "POST":
+        p = request.user.profile
+        p.notifications_setting = request.POST['notifications']
+        p.save()
+        messages.success(request, "Your settings have been saved")
+        return redirect("settings")
+    return render(request, "notification_settings.html")
+
+
+@login_required
+def contact_settings(request):
+    """Change contact settings."""
+    if request.method == "POST":
+        p = request.user.profile
+        p.can_be_contacted = request.POST['can_be_contacted'] == "1"
+        p.save()
+        messages.success(request, "Your settings have been saved")
+        return redirect("settings")
+    return render(request, "contact_settings.html")
 
 
 @login_required
@@ -248,16 +289,19 @@ def reply(request, pk):
         "comment": comment.text
     }
 
+    users = [topic.created_by]
     if parent:
-        users = set([r.author.user for r in parent.replies.all()])
-        users = [u for u in users if not comment.author.user == u]
-        for u in users:
-            notify(request, u, "comment_reply", data)
-        if not comment.author.user == topic.created_by and\
-                topic.created_by not in users:
-            notify(request, topic.created_by, "topic_reply", data)
-    elif not comment.author.user == topic.created_by:
-        notify(request, topic.created_by, "topic_reply", data)
+        # Make a list of all users at this level and above
+        p = parent
+        users += [p.author.user]
+        while p.parent:
+            p = p.parent
+            users.append(p.author.user)
+
+        users += [r.author.user for r in parent.replies.all()]
+
+    for u in set([u for u in users if not comment.author.user == u]):
+        notify(request, u, "comment_reply", data)
 
     topic.last_post = timezone.now()
     topic.save()

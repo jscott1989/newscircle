@@ -12,6 +12,11 @@ from markdown_deux import markdown
 # Ensure that every user has an associated profile
 User.profile = property(lambda u: Profile.objects.get_or_create(user=u)[0])
 
+EMAIL_IMMEDIATELY = 0
+DAILY_SUMMARY = 1
+WEEKLY_SUMMARY = 2
+NO_CONTACT = 3
+
 
 class Profile(models.Model):
 
@@ -24,6 +29,8 @@ class Profile(models.Model):
     given_consent = models.BooleanField(default=False)
     can_be_contacted = models.BooleanField(default=False)
     has_seen_contacted = models.BooleanField(default=False)
+
+    notifications_setting = models.IntegerField(default=EMAIL_IMMEDIATELY)
 
 
 class Topic(models.Model):

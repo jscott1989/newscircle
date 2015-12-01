@@ -2,10 +2,10 @@
 {% load urls %}
 {% load staticfiles %}
 
-{% block subject %}{{respond_user}} has replied to your comment on {{topic}}{% endblock %}
+{% block subject %}{{respond_user}} commented on {{topic}}{% endblock %}
 
 {% block html %}
-<a href="{% external_url "profile" respond_user.user.pk %}">{{respond_user}}</a> has replied to your comment on <a href="{% external_url "discussion" topic.pk %}" class="main-link">{{topic}}</a>.
+<a href="{% external_url "profile" respond_user.user.pk %}">{{respond_user}}</a> has comment on <a href="{% external_url "discussion" topic.pk %}" class="main-link">{{topic}}</a>.
 
 <blockquote>
     {{comment}}
@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block text %}
-{{respond_user}} ({% external_url "profile" respond_user.user.pk %}) has replied to your comment on {{topic}} ({% external_url "discussion" topic.pk %}).
+{{respond_user}} ({% external_url "profile" respond_user.user.pk %}) has commented on {{topic}} ({% external_url "discussion" topic.pk %}).
 
 "{{comment}}"
 {% endblock %}

@@ -2,6 +2,7 @@
 
 from django import forms
 from models import Topic
+from django.contrib.auth.models import User
 
 
 class TopicForm(forms.ModelForm):
@@ -66,3 +67,18 @@ class DemographicsForm(forms.Form):
             ('3', 'Other',),
             ('4', 'Prefer not to say',),
         ), label="What is your gender?")
+
+
+class UsernameForm(forms.Form):
+
+    """Form for changing username."""
+
+    username = forms.CharField()
+
+    def clean_username(self):
+        """Ensure the username is unique."""
+        data = self.cleaned_data['username']
+        if len(User.objects.filter(username=data)) > 0:
+            # Not unique
+            raise forms.ValidationError("Your username must be unique")
+        return data
