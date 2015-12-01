@@ -43,6 +43,8 @@ class Topic(models.Model):
     description = models.TextField()
     locked = models.BooleanField(default=False)
     pinned = models.BooleanField(default=False)
+    featured = models.BooleanField(default=False)
+    hidden = models.BooleanField(default=False)
     last_post = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User)

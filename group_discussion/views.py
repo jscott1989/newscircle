@@ -30,7 +30,7 @@ def index(request):
     """ List all topics. """
     TOPICS_PER_PAGE = 6
 
-    paginator = Paginator(Topic.objects.all().order_by('-pinned', '-last_post'), TOPICS_PER_PAGE)
+    paginator = Paginator(Topic.objects.filter(hidden=False).order_by('-featured', '-pinned', '-last_post'), TOPICS_PER_PAGE)
 
     page = request.GET.get('page')
 
@@ -92,7 +92,7 @@ def profile(request, pk):
 
     COMMENTS_PER_PAGE = 10
 
-    comments = Comment.objects.filter(author__user=user)
+    comments = Comment.objects.filter(author__user=user, topic__hidden=False)
 
     if sort_by == 'recent':
         comments = comments.order_by('-created_at')

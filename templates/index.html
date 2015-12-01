@@ -72,6 +72,7 @@
                                 <span class="number">{{forloop.counter|add:start_iterator}}</span>&nbsp;
                             </div>
                             <div class="small-9 columns">
+                                {% if topic.featured %}<strong>FEATURED</strong> {% endif %}
                                 {% if not topic.url %}
                                     <a href="{% url "discussion" topic.id %}">{{topic}}</a> (Text)
                                 {% else %}
