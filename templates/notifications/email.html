@@ -1,4 +1,4 @@
-<email_subject>{% if notifications.count == 1 %}{{notifications.0.subject}}{% else %}{{notifications.count}} Newscircle updates{% endif %}</email_subject>
+<email_subject>{% if notifications.count == 1 %}{{notifications.0.subject|safe}}{% else %}{{notifications.count}} Newscircle updates{% endif %}</email_subject>
 
 
 <email_text>
@@ -24,7 +24,7 @@ Newscircle.co
 </email_text>
 
 <email_html>
-Hi {{user}},
+<p>Hi {{user}},</p>
 
 {% if notifications.count == 1 %}
 {{notifications.0.html|safe}}
