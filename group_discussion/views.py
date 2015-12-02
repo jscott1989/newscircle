@@ -314,8 +314,9 @@ def reply(request, pk):
 
             users += [r.author.user for r in parent.replies.all()]
 
-        for u in set([u for u in users if not comment.author.user == u]):
-            notify(request, u, "comment_reply", data)
+        print "NOTIFY", users
+        for user in set([u for u in users if not comment.author.user == u]):
+            notify(request, user, "comment_reply", data)
 
     topic = get_object_or_404(Topic, pk=pk)
 
@@ -449,7 +450,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if not self.request.user.is_authenticated():
             return []
-        return Notification.objects.all().filter(user=self.request.user)
+        return [n.clean_unicode for n in Notification.objects.all().filter(user=self.request.user)]
 
 
 class GroupViewSet(viewsets.ModelViewSet):

@@ -10,6 +10,8 @@ from bs4 import BeautifulSoup
 from markdown_deux import markdown
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
+from django.utils.encoding import smart_text
+
 
 # Ensure that every user has an associated profile
 User.profile = property(lambda u: Profile.objects.get_or_create(user=u)[0])
@@ -324,6 +326,21 @@ class Notification(models.Model):
     read = models.BooleanField(default=False)
     read_datetime = models.DateTimeField(null=True)
     email_sent = models.BooleanField(default=False)
+
+    @property
+    def clean_unicode(self):
+        return {
+            "id": self.id,
+            "created_time": self.created_time,
+            "subject": smart_text(self.subject),
+            "html": smart_text(self.html),
+            "text": smart_text(self.text),
+            "read": self.read,
+            "image": smart_text(self.image),
+            "short": smart_text(self.short),
+            "main_link": self.main_link
+        }
+
 
     @property
     def short(self):
