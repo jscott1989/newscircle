@@ -90,6 +90,10 @@
         <div id="recent-notifications">
             
         </div>
+
+        <div class="call-to-action">
+            <p>Sign up to newscircle so you can participate in the discussion and vote for contributions</p>
+        </div>
         
         <script src="{% static "jquery/dist/jquery.min.js" %}"></script>
         <script src="{% static "jquery.cookie/jquery.cookie.js" %}"></script>
@@ -116,6 +120,8 @@
                 USER_AUTHENTICATED = true;
             {% endif %}
         </script>
+
+        <script src="{% static "js/call_to_action.js" %}"></script>
 
         {% compress js %}
             <script type="text/jsx" src="{% static "js/general_components.js"%}"></script>
