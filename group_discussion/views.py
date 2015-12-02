@@ -35,7 +35,8 @@ def index(request):
         del request.session['login_prefix']
     TOPICS_PER_PAGE = 6
 
-    paginator = Paginator(Topic.objects.filter(hidden=False).order_by('-featured', '-pinned', '-last_post'), TOPICS_PER_PAGE)
+    paginator = Paginator(Topic.objects.filter(hidden=False).order_by(
+        '-featured', '-pinned', '-last_post'), TOPICS_PER_PAGE)
 
     page = request.GET.get('page')
 
