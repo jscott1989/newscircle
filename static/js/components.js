@@ -406,7 +406,7 @@ var CommentComponent = React.createClass({
 
 
         var replyToggle = '';
-        if (!DISCUSSION_LOCKED && USER_AUTHENTICATED) {
+        if (!DISCUSSION_LOCKED) {
             replyToggle = <a onClick={this.toggleReply} className="reply">reply</a>;
         }
 
@@ -491,12 +491,15 @@ var ReplyComponent = React.createClass({
         this.setState({text: e.target.value});
     },
     render: function() {
-        if (DISCUSSION_LOCKED || !USER_AUTHENTICATED) {
+        if (DISCUSSION_LOCKED) {
             return <div></div>;
         }
+        var csrftoken = $.cookie('csrftoken');
         return (
                 <div className="reply">
-                    <form>
+                    <form method="POST" action={"/discussion/" + DISCUSSION_ID + "/reply"}>
+                        <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
+                        <input type="hidden" name="parent" value={this.props.parent} />
                         <textarea name="text" value={this.state.text} onChange={this.handleTextChange} />
                         <button type="submit" onClick={this.submitReply}>Reply</button>
                     </form>
@@ -505,14 +508,17 @@ var ReplyComponent = React.createClass({
     },
 
     submitReply: function() {
-        var self = this;
-        if (this.props.toggleReply) {
-            this.props.toggleReply();
+        if (USER_AUTHENTICATED) {
+            // If authenticated, we can AJAX it 
+            var self = this;
+            if (this.props.toggleReply) {
+                this.props.toggleReply();
+            }
+            $.post('/discussion/' + DISCUSSION_ID + '/reply', {"text": this.state.text, "parent": this.props.parent}, function() {
+                self.setState({text: ""});
+                update(true);
+            })
+            return false;
         }
-        $.post('/discussion/' + DISCUSSION_ID + '/reply', {"text": this.state.text, "parent": this.props.parent}, function() {
-            self.setState({text: ""});
-            update(true);
-        })
-        return false;
     }
 });

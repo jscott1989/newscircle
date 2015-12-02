@@ -1,0 +1,12 @@
+{% load markdown_deux_tags %}
+<h1>You just need to log in to post that.</h1>
+
+<p>We've saved your post - and as soon as you log in we'll add it to the discussion.</p>
+
+<blockquote>
+    <h2>{{request.session.topic.title}}</h2>
+    {% if request.session.topic_include_image %}
+        <div><img src="{{request.session.topic_image}}"></div>
+    {% endif %}
+    {{description|markdown}}
+</blockquote>

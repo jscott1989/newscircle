@@ -56,15 +56,14 @@
     <script>
         var DISCUSSION_ID = {{topic.id}};
         var DISCUSSION_LOCKED = false;
-        var USER_AUTHENTICATED = false;
         var CURRENT_USER_ID = 0;
+        {% if request.user.is_authenticated %}
+            var CURRENT_USER_ID = {{topic_user.id}};
+        {% endif %}
         {% if topic.locked %}
             DISCUSSION_LOCKED = true;
         {% endif %}
-        {% if request.user.is_authenticated %}
-            USER_AUTHENTICATED = true;
-            var CURRENT_USER_ID = {{topic_user.id}};
-        {% endif %}
+        
 
         var STARTING_COMMENTS = {{comments|safe}};
         var STARTING_USERS = {{users|safe}};

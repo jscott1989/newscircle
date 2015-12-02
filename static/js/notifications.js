@@ -127,31 +127,33 @@ var NotificationButton = React.createClass({
     }
 })
 
-React.render(
-   <NotificationList collection={NOTIFICATIONS} />,
-   document.getElementById("notifications-list")
-);
+if (USER_AUTHENTICATED) {
+  React.render(
+     <NotificationList collection={NOTIFICATIONS} />,
+     document.getElementById("notifications-list")
+  );
 
-React.render(
-   <NotificationButton collection={NOTIFICATIONS} />,
-   document.getElementById("notifications-button")
-);
+  React.render(
+     <NotificationButton collection={NOTIFICATIONS} />,
+     document.getElementById("notifications-button")
+  );
 
-React.render(
-   <RecentNotifications collection={NOTIFICATIONS} />,
-   document.getElementById("recent-notifications")
-);
+  React.render(
+     <RecentNotifications collection={NOTIFICATIONS} />,
+     document.getElementById("recent-notifications")
+  );
 
 
-$("#notifications-button").hover(function() {
-    unread_count = NOTIFICATIONS.filter(function(n) {
-            return n.get('read') == false;
-    }).length;
+  $("#notifications-button").hover(function() {
+      unread_count = NOTIFICATIONS.filter(function(n) {
+              return n.get('read') == false;
+      }).length;
 
-    if (unread_count > 0) {
-        $.post("/notifications/read");
-        NOTIFICATIONS.each(function(notification) {
-            notification.set('read', true);
-        });
-    }
-});
+      if (unread_count > 0) {
+          $.post("/notifications/read");
+          NOTIFICATIONS.each(function(notification) {
+              notification.set('read', true);
+          });
+      }
+  });
+}

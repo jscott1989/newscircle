@@ -1,0 +1,8 @@
+{% load markdown_deux_tags %}
+<h1>You just need to log in to post that.</h1>
+
+<p>We've saved your comment - and as soon as you log in we'll add it to the discussion.</p>
+
+<blockquote>
+    {{request.session.comment.text|markdown}}
+</blockquote>

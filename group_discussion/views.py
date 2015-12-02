@@ -23,6 +23,9 @@ from notifications import notify
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from forms import UsernameForm
+from django.template.loader import render_to_string
+from django.template import RequestContext
+from django.core.urlresolvers import reverse
 embedly_client = Embedly(EMBEDLY_KEY)
 
 
@@ -125,23 +128,43 @@ def profile(request, pk):
                    "sort_by": sort_by})
 
 
-@login_required
-@require_POST
 def create_topic(request):
     """ Create a topic. """
-    form = TopicForm()
-    form = TopicForm(request.POST)
-    if form.is_valid():
-        t = form.save(commit=False)
-        t.created_by = request.user
 
-        if request.POST.get("include_image"):
-            t.description = "![](" + request.POST['image'] + ")\n\n" + t.description
-            t.thumbnail_url = request.POST['image']
+    if request.method == "POST":
+        form = TopicForm(request.POST)
+        if form.is_valid():
+            t = form.save(commit=False)
+
+            if not request.user.is_authenticated():
+                # Record what they posted and then send them to login
+                request.session['topic'] = form.cleaned_data
+                request.session['topic_include_image'] = request.POST.get("include_image")
+                request.session['topic_image'] = request.POST.get("image")
+                request.session['login_prefix'] = render_to_string(
+                    "login_new_topic.html",
+                    form.cleaned_data,
+                    context_instance=RequestContext(request))
+                return redirect(reverse("account_login") + "?next=/create_topic")
+
+            t.created_by = request.user
+
+            if request.POST.get("include_image"):
+                t.description = "![](" + request.POST['image'] + ")\n\n" + t.description
+                t.thumbnail_url = request.POST['image']
+            t.save()
+            messages.success(request, "Your topic has been created")
+            return redirect("discussion", t.pk)
+    elif 'topic' in request.session and request.user.is_authenticated():
+        t = Topic(title=request.session['topic']['title'], description=request.session['topic']['description'], url=request.session['topic']['url'])
+        t.created_by = request.user
+        if request.session.get("topic_include_image"):
+            t.description = "![](" + request.session['topic_image'] + ")\n\n" + t.description
+            t.thumbnail_url = request.session['topic_image']
         t.save()
         messages.success(request, "Your topic has been created")
+        del request.session['topic']
         return redirect("discussion", t.pk)
-    print form.errors
     messages.error(request, "There was a problem submitting this link.")
     return redirect("index")
 
@@ -194,7 +217,6 @@ def discussion(request, pk):
                   )
 
 
-@login_required
 @require_POST
 @csrf_exempt
 def lookup_url(request):
@@ -266,46 +288,84 @@ def contact_settings(request):
     return render(request, "contact_settings.html")
 
 
-@login_required
-@require_POST
 def reply(request, pk):
     """ reply to a topic or comment. """
+
+    def _notify_reply(comment):
+        data = {
+            "respond_user": comment.author,
+            "topic": comment.topic,
+            "comment": comment.text
+        }
+
+        users = [topic.created_by]
+        if comment.parent:
+            # Make a list of all users at this level and above
+            p = comment.parent
+            users += [p.author.user]
+            while p.parent:
+                p = p.parent
+                users.append(p.author.user)
+
+            users += [r.author.user for r in parent.replies.all()]
+
+        for u in set([u for u in users if not comment.author.user == u]):
+            notify(request, u, "comment_reply", data)
+
     topic = get_object_or_404(Topic, pk=pk)
 
-    parent = None
-    if request.POST.get('parent'):
-        parent = get_object_or_404(Comment, pk=request.POST['parent'])
+    if request.method == "POST":
+        parent = None
+        if request.POST.get('parent'):
+            parent = get_object_or_404(Comment, pk=request.POST['parent'])
+        if not request.user.is_authenticated():
+            # Record what they posted and then send them to login
+            request.session['comment'] = {
+                "text": request.POST['text'],
+                "topic_pk": topic.pk,
+            }
 
-    comment = Comment(text=request.POST['text'],
-                      topic=topic,
-                      parent=parent,
-                      author=request.user.topic_user(topic),
-                      created_at=timezone.now())
-    comment.save()
+            if parent:
+                request.session["comment"]["parent_pk"] = parent.pk
+                
+            request.session['login_prefix'] = render_to_string(
+                "login_reply.html",
+                context_instance=RequestContext(request))
+            return redirect(reverse("account_login") + "?next=/discussion/" + str(topic.pk) + "/reply")
 
-    data = {
-        "respond_user": comment.author,
-        "topic": topic,
-        "comment": comment.text
-    }
+        comment = Comment(text=request.POST['text'],
+                          topic=topic,
+                          parent=parent,
+                          author=request.user.topic_user(topic),
+                          created_at=timezone.now())
+        comment.save()
 
-    users = [topic.created_by]
-    if parent:
-        # Make a list of all users at this level and above
-        p = parent
-        users += [p.author.user]
-        while p.parent:
-            p = p.parent
-            users.append(p.author.user)
+        _notify_reply(comment)
 
-        users += [r.author.user for r in parent.replies.all()]
+        topic.last_post = timezone.now()
+        topic.save()
+        return JsonResponse({})
+    elif request.user.is_authenticated() and "comment" in request.session:
+        parent = None
+        if "parent_pk" in request.session["comment"]:
+            parent = get_object_or_404(Comment, pk=request.session["comment"]["parent_pk"])
+        comment = Comment(text=request.session["comment"]["text"],
+                          topic=topic,
+                          parent=parent,
+                          author=request.user.topic_user(topic),
+                          created_at=timezone.now())
+        comment.save()
 
-    for u in set([u for u in users if not comment.author.user == u]):
-        notify(request, u, "comment_reply", data)
+        _notify_reply(comment)
 
-    topic.last_post = timezone.now()
-    topic.save()
-    return JsonResponse({})
+        topic.last_post = timezone.now()
+        topic.save()
+        del request.session["comment"]
+        messages.success(request, "Your comment has been posted")
+        return redirect("discussion", pk)
+
+    messages.error(request, "There was a problem posting that comment")
+    return redirect("discussion", pk)
 
 
 @login_required

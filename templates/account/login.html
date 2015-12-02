@@ -9,7 +9,11 @@
 
 {% block content %}
 
-<h1>{% trans "Sign In" %}</h1>
+{% if request.session.login_prefix %}
+  {{request.session.login_prefix|safe}}
+{% else %}
+  <h1>{% trans "Sign In" %}</h1>
+{% endif %}
 
 {% get_providers as socialaccount_providers %}
 

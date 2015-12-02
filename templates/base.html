@@ -110,6 +110,11 @@
 
         <script>
             var STARTING_NOTIFICATIONS = {{notifications|safe}};
+
+            var USER_AUTHENTICATED = false;
+            {% if request.user.is_authenticated %}
+                USER_AUTHENTICATED = true;
+            {% endif %}
         </script>
 
         {% compress js %}

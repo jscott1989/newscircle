@@ -13,7 +13,7 @@ def settings(request):
 
 def notifications(request):
     if not request.user.is_authenticated():
-        return {}
+        return {"notifications": []}
     r = JSONRenderer()
     return {
         "notifications": r.render([NotificationSerializer(n).data
