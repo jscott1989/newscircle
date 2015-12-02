@@ -57,7 +57,8 @@ INSTALLED_APPS = (
     'allauth.socialaccount.providers.google',
 
 
-    'group_discussion'
+    'group_discussion',
+    'raven.contrib.django.raven_compat',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -205,3 +206,13 @@ MARKDOWN_DEUX_STYLES = {
         "safe_mode": "escape",
     },
 }
+
+if not DEBUG:
+    import raven
+
+    RAVEN_CONFIG = {
+        'dsn': 'https://90c06b20e88c46c8a31f4b30e0d5db78:a52cb2c2c5e04eb2b963d522617a702c@app.getsentry.com/60177',
+        # If you are using git, you can also automatically configure the
+        # release based on the git info.
+        'release': "1"
+    }
