@@ -31,6 +31,8 @@ embedly_client = Embedly(EMBEDLY_KEY)
 
 def index(request):
     """ List all topics. """
+    if 'login_prefix' in request.session:
+        del request.session['login_prefix']
     TOPICS_PER_PAGE = 6
 
     paginator = Paginator(Topic.objects.filter(hidden=False).order_by('-featured', '-pinned', '-last_post'), TOPICS_PER_PAGE)
@@ -195,6 +197,8 @@ def communicate(request):
 
 def discussion(request, pk):
     """ View an individual discussion. """
+    if 'login_prefix' in request.session:
+        del request.session['login_prefix']
     topic = get_object_or_404(Topic, pk=pk)
     r = JSONRenderer()
     comments = r.render([CommentSerializer(c).data
