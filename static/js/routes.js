@@ -3,10 +3,13 @@ USERS = new DiscussionUsers(STARTING_USERS, {mode: "client"});
 COMMENTS = new Discussion(STARTING_COMMENTS, {mode: "client"});
 
 
-function update(){
+function update(force_refresh){
     GROUPS.fetch({update: true, success: function() {
         USERS.fetch({update: true, success: function() {
             COMMENTS.fetch({update: true, success: function() {
+                if (force_refresh) {
+                    refreshView();
+                }
                 refresh_groups();
                 check_for_new_posts();
             }});

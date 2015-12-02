@@ -305,7 +305,7 @@ def reply(request, pk):
 
     topic.last_post = timezone.now()
     topic.save()
-    return redirect("discussion", topic.pk)
+    return JsonResponse({})
 
 
 @login_required

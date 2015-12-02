@@ -401,7 +401,7 @@ var CommentComponent = React.createClass({
 
         var replyContent = '';
         if (this.state.showReply) {
-            replyContent = <ReplyComponent parent={this.props.comment.get('id')} />;
+            replyContent = <ReplyComponent toggleReply={this.toggleReply} parent={this.props.comment.get('id')} />;
         }
 
 
@@ -436,10 +436,10 @@ var CommentComponent = React.createClass({
                                 <Time time={this.props.comment.get('created_at')} />
                                 {replyToggle}
                             </div>
+                            {replyContent}
                             <div className="replies">
                                 {replyNodes}
                             </div>
-                            {replyContent}
                         </div>
                     </div>
                 </div>
@@ -468,6 +468,8 @@ var NewPostsComponent = React.createClass({
             }
         }
 
+        window.refreshView = self.refreshView;
+
         if (self.state.new_comments > 0) {
             var new_posts_text = self.state.new_comments + " new comments"
             if (self.state.new_comments == 1) {
@@ -482,20 +484,35 @@ var NewPostsComponent = React.createClass({
 
 
 var ReplyComponent = React.createClass({
+    getInitialState: function() {
+        return {text: ''};
+    },
+    handleTextChange: function(e) {
+        this.setState({text: e.target.value});
+    },
     render: function() {
         if (DISCUSSION_LOCKED || !USER_AUTHENTICATED) {
             return <div></div>;
         }
-        var csrftoken = $.cookie('csrftoken');
         return (
                 <div className="reply">
-                    <form method="POST" action={"/discussion/" + DISCUSSION_ID + "/reply"}>
-                        <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
-                        <input type="hidden" name="parent" value={this.props.parent} />
-                        <textarea name="text" />
-                        <button type="submit">Reply</button>
+                    <form>
+                        <textarea name="text" value={this.state.text} onChange={this.handleTextChange} />
+                        <button type="submit" onClick={this.submitReply}>Reply</button>
                     </form>
                 </div>
         );
+    },
+
+    submitReply: function() {
+        var self = this;
+        if (this.props.toggleReply) {
+            this.props.toggleReply();
+        }
+        $.post('/discussion/' + DISCUSSION_ID + '/reply', {"text": this.state.text, "parent": this.props.parent}, function() {
+            self.setState({text: ""});
+            update(true);
+        })
+        return false;
     }
 });
