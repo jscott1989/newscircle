@@ -618,10 +618,49 @@
 	},
 	"expanded_folders":
 	[
-		"/Users/jonathan/Documents/University/year_3/creating"
+		"/Users/jonathan/Documents/University/year_3/creating",
+		"/Users/jonathan/Documents/University/year_3/creating/group_discussion/management",
+		"/Users/jonathan/Documents/University/year_3/creating/static",
+		"/Users/jonathan/Documents/University/year_3/creating/static/js"
 	],
 	"file_history":
 	[
+		"/Users/jonathan/Documents/University/year_3/creating/group_discussion/context_processors.py",
+		"/Users/jonathan/Documents/University/year_3/creating/group_discussion/urls.py",
+		"/Users/jonathan/Documents/University/year_3/creating/group_discussion/views.py",
+		"/Users/jonathan/Documents/University/year_3/creating/group_discussion/models.py",
+		"/Users/jonathan/Documents/University/year_3/creating/group_discussion/serializers.py",
+		"/Users/jonathan/Documents/University/year_3/creating/group_discussion/admin.py",
+		"/Users/jonathan/Documents/University/year_3/creating/templates/settings.html",
+		"/Users/jonathan/Documents/University/year_3/creating/requirements.txt",
+		"/Users/jonathan/Documents/University/year_3/creating/group_discussion/settings.py",
+		"/Users/jonathan/Documents/University/year_3/creating/static/js/routes.js",
+		"/Users/jonathan/Documents/University/year_3/creating/templates/login_reply.html",
+		"/Users/jonathan/Documents/University/year_3/creating/templates/base.html",
+		"/Users/jonathan/Documents/University/year_3/creating/templates/discussion.html",
+		"/Users/jonathan/Documents/University/year_3/creating/static/js/components.js",
+		"/Users/jonathan/Documents/University/year_3/creating/static/sass/discussion.scss",
+		"/Users/jonathan/Documents/University/year_3/creating/static/js/call_to_action.js",
+		"/Users/jonathan/Documents/University/year_3/creating/group_discussion/notifications.py",
+		"/Users/jonathan/Documents/University/year_3/creating/templates/account/login.html",
+		"/Users/jonathan/Documents/University/year_3/creating/templates/login_new_topic.html",
+		"/Users/jonathan/Documents/University/year_3/creating/templates/index.html",
+		"/Users/jonathan/Documents/University/year_3/creating/group_discussion/forms.py",
+		"/Users/jonathan/Documents/University/year_3/creating/static/js/notifications.js",
+		"/Users/jonathan/Documents/University/year_3/creating/group_discussion/middleware.py",
+		"/Users/jonathan/Documents/University/year_3/creating/static/js/markdown.js",
+		"/Users/jonathan/Documents/University/year_3/creating/templates/notifications/email.html",
+		"/Users/jonathan/Documents/University/year_3/creating/group_discussion/management/commands/send_notifications.py",
+		"/Users/jonathan/Documents/University/year_3/creating/group_discussion/management/commands/send_daily_notifications.py",
+		"/Users/jonathan/Documents/University/year_3/creating/group_discussion/management/commands/send_notification_weekly.py",
+		"/Users/jonathan/Documents/University/year_3/creating/templates/notifications/comment_reply.html",
+		"/Users/jonathan/Documents/University/year_3/creating/run_background.sh",
+		"/Users/jonathan/Documents/University/year_3/creating/templates/contact_settings.html",
+		"/Users/jonathan/Documents/University/year_3/creating/templates/notification_settings.html",
+		"/Users/jonathan/Desktop/test.py",
+		"/Users/jonathan/Documents/University/year_3/creating/templates/edit_username.html",
+		"/Users/jonathan/Documents/University/year_3/creating/templates/profile.html",
+		"/Users/jonathan/Documents/University/year_3/creating/templates/demographics.html",
 		"/Users/jonathan/Documents/University/year_3/creating/newscircle.sublime-project",
 		"/Users/jonathan/Documents/Programming/python/happening/requirements.txt",
 		"/Users/jonathan/Documents/Programming/python/happening/templates/forms/widgets/enableddisabled_widget.html",
@@ -713,47 +752,11 @@
 		"/Users/jonathan/Documents/Programming/python/happening/events/tests/test_post_event_updating.py",
 		"/Users/jonathan/Documents/Programming/python/happening/events/tests/test_ticket_purchase.py",
 		"/Users/jonathan/Documents/Programming/python/happening/events/tests/test_ticket_widget.py",
-		"/Users/jonathan/Documents/Programming/python/happening/events/tests/test_tickets.py",
-		"/Users/jonathan/Documents/Programming/python/happening/external/tests/test_layout.py",
-		"/Users/jonathan/Documents/Programming/python/happening/events/tests/test_event.py",
-		"/Users/jonathan/Documents/Programming/python/happening/events/feeds.py",
-		"/Users/jonathan/Documents/Programming/python/happening/tox.ini",
-		"/Users/jonathan/Documents/Programming/python/happening/templates/forms/widgets/checkbox_input.html",
-		"/Users/jonathan/Documents/Programming/python/happening/static/sass/blocks/form.scss",
-		"/Users/jonathan/Documents/Programming/python/happening/static/sass/modifiers/tooltip.scss",
-		"/Users/jonathan/Documents/Programming/python/happening/static/sass/modifiers.scss",
-		"/Users/jonathan/Documents/Programming/python/happening/static/js/blocks/purchase-tickets-widget.js",
-		"/Users/jonathan/Documents/Programming/python/happening/templates/events/_purchase_tickets_widget.html",
-		"/Users/jonathan/Documents/Programming/python/happening/events/views.py",
-		"/Users/jonathan/Documents/Programming/python/happening/happening/templatetags/plugins.py",
-		"/Users/jonathan/Documents/Programming/python/happening/staff/views.py",
-		"/Users/jonathan/Documents/Programming/python/happening/happening/templatetags/happening_ganalytics.py",
-		"/Users/jonathan/Documents/Programming/python/happening/static/js/blocks/form/enableddisabled-widget.js",
-		"/Users/jonathan/Documents/Programming/python/happening/static/sass/main.scss",
-		"/Users/jonathan/Documents/Programming/python/happening/external/views.py",
-		"/Users/jonathan/Documents/Programming/python/happening/templates/members/edit_profile.html",
-		"/Users/jonathan/Documents/Programming/python/happening/templates/admin/configuration.html",
-		"/Users/jonathan/Documents/Programming/python/happening/events/templatetags/tickets.py",
-		"/Users/jonathan/Documents/Programming/python/happening/static/js/blocks/form/emails-widget.js",
-		"/Users/jonathan/Documents/Programming/python/happening/templates/events/view.html",
-		"/Users/jonathan/Documents/Programming/python/happening/static/js/utils.js",
-		"/Users/jonathan/Documents/Programming/python/happening/static/js/utils.py",
-		"/Users/jonathan/Documents/Programming/python/happening/payments/templatetags/currency.py",
-		"/Users/jonathan/Documents/Programming/python/happening/bower.json",
-		"/Users/jonathan/Documents/Programming/python/happening/plugins/groups/templatetags/group_permissions.py",
-		"/Users/jonathan/Documents/Programming/python/happening/happening/templatetags/jsonify.py",
-		"/Users/jonathan/Documents/Programming/python/happening/templates/forms/widgets/tickets_widget.html",
-		"/Users/jonathan/Documents/Programming/python/happening/bin/post_compile",
-		"/Users/jonathan/Documents/Programming/dojo/website/log.txt",
-		"/Users/jonathan/Documents/Programming/python/happening/check-standards",
-		"/Users/jonathan/Documents/Programming/python/happening/plugins/comments/templates/notifications/notifications/comments/comment.html",
-		"/Users/jonathan/Documents/Programming/python/happening/admin/__init__.py",
-		"/Users/jonathan/Documents/Programming/python/happening/admin/urls.py",
-		"/Users/jonathan/Documents/Programming/python/happening/templates/notifications/email.html"
+		"/Users/jonathan/Documents/Programming/python/happening/events/tests/test_tickets.py"
 	],
 	"find":
 	{
-		"height": 25.0
+		"height": 54.0
 	},
 	"find_in_files":
 	{
@@ -879,6 +882,43 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"stephen",
+			"[\"",
+			"jsonrenderer",
+			"jsonrender",
+			"notifications",
+			"notification",
+			"rest",
+			"notificationseriali",
+			"notifications",
+			"discuss",
+			"index",
+			"sign",
+			"del ses",
+			"is_authentic",
+			"r =",
+			"return r",
+			"reply",
+			"window.",
+			"refreshView",
+			"this.state.showreply",
+			"check_for_new",
+			"refreshview",
+			"replycom",
+			"login",
+			"markdown",
+			"window",
+			"refresh",
+			"replycomponent",
+			"value",
+			"bind",
+			"def index",
+			"external",
+			"notific",
+			"notifica",
+			"notific",
+			"request.user.save",
+			"messages",
 			"render_field",
 			"render_Field",
 			"do we l",
@@ -969,44 +1009,7 @@
 			".runpython",
 			"is sponsored by",
 			".min",
-			"persona",
-			".find(\"ta",
-			"pep",
-			"voting",
-			"no tickets av",
-			"vote",
-			"_vote_wid",
-			"recommended_language",
-			"waiting_",
-			"no tickets ava",
-			"static",
-			"media",
-			"datetimef",
-			"multipart",
-			"class tickettype",
-			"def purchasable",
-			"purchasable",
-			"total_available_tickets",
-			"waiting_list_available",
-			"purchasable(",
-			"purchasable",
-			"purchasable(",
-			":user",
-			"user",
-			"purchasable_tickets_no",
-			"TicketForm",
-			"remaining_tickets",
-			"remaining_ticket",
-			"lengthcount",
-			"events.configuration.EnableWaitingLists",
-			"no tickets available",
-			"WaitingListSubscription",
-			"message",
-			"messages.suc",
-			"success",
-			"?next=",
-			"purchasable",
-			"active"
+			"persona"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1113,6 +1116,178 @@
 		"selected_items":
 		[
 			[
+				"serial",
+				"group_discussion/serializers.py"
+			],
+			[
+				"models",
+				"group_discussion/models.py"
+			],
+			[
+				"seria",
+				"group_discussion/serializers.py"
+			],
+			[
+				"url",
+				"group_discussion/urls.py"
+			],
+			[
+				"urls",
+				"group_discussion/urls.py"
+			],
+			[
+				"views",
+				"group_discussion/views.py"
+			],
+			[
+				"setting",
+				"group_discussion/settings.py"
+			],
+			[
+				"admin",
+				"group_discussion/admin.py"
+			],
+			[
+				"contx",
+				"group_discussion/context_processors.py"
+			],
+			[
+				"settings",
+				"group_discussion/settings.py"
+			],
+			[
+				"sett",
+				"templates/settings.html"
+			],
+			[
+				"req",
+				"requirements.txt"
+			],
+			[
+				".scss",
+				"static/sass/discussion.scss"
+			],
+			[
+				"base",
+				"templates/base.html"
+			],
+			[
+				"disco",
+				"templates/discussion.html"
+			],
+			[
+				"rout",
+				"static/js/routes.js"
+			],
+			[
+				"component",
+				"static/js/components.js"
+			],
+			[
+				"forms",
+				"group_discussion/forms.py"
+			],
+			[
+				"login",
+				"templates/account/login.html"
+			],
+			[
+				"form",
+				"group_discussion/forms.py"
+			],
+			[
+				"fom",
+				"group_discussion/forms.py"
+			],
+			[
+				"login_n",
+				"templates/login_new_topic.html"
+			],
+			[
+				"login.html",
+				"templates/account/login.html"
+			],
+			[
+				"notifia",
+				"group_discussion/notifications.py"
+			],
+			[
+				"discu",
+				"templates/discussion.html"
+			],
+			[
+				"notifications.js",
+				"static/js/notifications.js"
+			],
+			[
+				"conte",
+				"group_discussion/context_processors.py"
+			],
+			[
+				"middle",
+				"group_discussion/middleware.py"
+			],
+			[
+				"index",
+				"templates/index.html"
+			],
+			[
+				"components.",
+				"static/js/components.js"
+			],
+			[
+				"markdown",
+				"static/js/markdown.js"
+			],
+			[
+				"inde",
+				"templates/index.html"
+			],
+			[
+				"notifi",
+				"group_discussion/notifications.py"
+			],
+			[
+				"notif",
+				"templates/notification_settings.html"
+			],
+			[
+				"notificaitonsettings",
+				"templates/notification_settings.html"
+			],
+			[
+				"notification_se",
+				"templates/notification_settings.html"
+			],
+			[
+				"vies",
+				"group_discussion/views.py"
+			],
+			[
+				"notifications.html",
+				"templates/notification_settings.html"
+			],
+			[
+				"notifica",
+				"group_discussion/notifications.py"
+			],
+			[
+				"settings.html",
+				"templates/settings.html"
+			],
+			[
+				"view",
+				"group_discussion/views.py"
+			],
+			[
+				"profile",
+				"templates/profile.html"
+			],
+			[
+				"demogr",
+				"templates/demographics.html"
+			],
+			[
 				"requi",
 				"requirements.txt"
 			],
@@ -1131,14 +1306,6 @@
 			[
 				"index.html",
 				"templates/index.html"
-			],
-			[
-				"base",
-				"templates/base.html"
-			],
-			[
-				"setting",
-				"static/sass/settings.scss"
 			],
 			[
 				"lay",
@@ -1397,10 +1564,6 @@
 				"happening/models.py"
 			],
 			[
-				"middle",
-				"happening/middleware.py"
-			],
-			[
 				"happeningforms",
 				"happening/forms.py"
 			],
@@ -1463,166 +1626,6 @@
 			[
 				"eventsexc",
 				"events/exceptions.py"
-			],
-			[
-				"eventsevent_co",
-				"events/event_configuration.py"
-			],
-			[
-				"eventsconfig",
-				"events/configuration.py"
-			],
-			[
-				"emailsnot",
-				"emails/notifications.py"
-			],
-			[
-				"emaislmod",
-				"emails/models.py"
-			],
-			[
-				"emailseven",
-				"emails/event_configuration.py"
-			],
-			[
-				"adminmodels",
-				"admin/models.py"
-			],
-			[
-				"adminforms",
-				"admin/forms.py"
-			],
-			[
-				"memberconfigu",
-				"members/configuration.py"
-			],
-			[
-				"configuration",
-				"happening/configuration.py"
-			],
-			[
-				"configuration.py",
-				"events/configuration.py"
-			],
-			[
-				"form.scss",
-				"static/sass/blocks/form.scss"
-			],
-			[
-				"test_sta",
-				"staff/tests/test_staff.py"
-			],
-			[
-				"staffvie",
-				"staff/views.py"
-			],
-			[
-				"staffviews",
-				"staff/views.py"
-			],
-			[
-				"templatetagsplig",
-				"happening/templatetags/plugins.py"
-			],
-			[
-				"eventviews",
-				"events/views.py"
-			],
-			[
-				"purchase-",
-				"static/js/blocks/purchase-tickets-widget.js"
-			],
-			[
-				"templatetagsplugins",
-				"happening/templatetags/plugins.py"
-			],
-			[
-				"plugins.py",
-				"happening/templatetags/plugins.py"
-			],
-			[
-				"event_configura",
-				"events/event_configuration.py"
-			],
-			[
-				".scss",
-				"static/sass/blocks/form.scss"
-			],
-			[
-				"happenignconfigu",
-				"happening/configuration.py"
-			],
-			[
-				"extenralviews",
-				"external/views.py"
-			],
-			[
-				"ganal",
-				"happening/templatetags/happening_ganalytics.py"
-			],
-			[
-				"forms.py",
-				"happening/templatetags/forms.py"
-			],
-			[
-				"happeningutil",
-				"happening/utils.py"
-			],
-			[
-				"membershipconfigu",
-				"plugins/membership/configuration.py"
-			],
-			[
-				"templateforms",
-				"happening/templatetags/forms.py"
-			],
-			[
-				"profile",
-				"templates/members/edit_profile.html"
-			],
-			[
-				"externalviews",
-				"external/views.py"
-			],
-			[
-				"happening_gana",
-				"happening/templatetags/happening_ganalytics.py"
-			],
-			[
-				"pagesconfigu",
-				"pages/configuration.py"
-			],
-			[
-				"forms_form",
-				"templates/forms/_form.html"
-			],
-			[
-				"configuration.html",
-				"templates/admin/configuration.html"
-			],
-			[
-				"test_ticket_pu",
-				"events/tests/test_ticket_purchase.py"
-			],
-			[
-				"templatetagstickets",
-				"events/templatetags/tickets.py"
-			],
-			[
-				"event_con",
-				"events/event_configuration.py"
-			],
-			[
-				"eventforms",
-				"events/forms.py"
-			],
-			[
-				"view.html",
-				"templates/events/view.html"
-			],
-			[
-				"base.html",
-				"templates/base.html"
 			]
 		],
 		"width": 0.0
